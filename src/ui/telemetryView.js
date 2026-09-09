@@ -1,6 +1,9 @@
 import { EventBus } from '../utils/eventBus.js';
 import { formatTime, formatCredits } from '../utils/formatNumber.js';
 import { startManualLap } from '../systems/gameLoop.js';
+import { AudioCues } from '../audio/audioManager.js';
+import { createNumberPopup } from '../fx/numberPopups.js';
+import { createParticleBurst } from '../fx/particleSystem.js';
 
 let telemetryContainer;
 let lapTimeDisplay;
@@ -34,6 +37,7 @@ export function initTelemetryView(container, state) {
     startButton = document.getElementById('start-lap-btn');
     
     startButton.addEventListener('click', () => {
+        AudioCues.buttonClick();
         startManualLap();
     });
     
@@ -48,6 +52,7 @@ function handleLapStarted({ expectedDurationMs }) {
     currentLapStartMs = performance.now();
     startButton.disabled = true;
     startButton.classList.add('active');
+    AudioCues.startLap();
 }
 
 function handleLapProgress({ progress }) {
@@ -56,15 +61,29 @@ function handleLapProgress({ progress }) {
     lapTimeDisplay.textContent = formatTime(elapsed);
 }
 
-function handleLapCompleted({ lapTimeMs, profit }) {
+function handleLapCompleted({ lapTimeMs, profit, isPersonalBest }) {
     isLapping = false;
     lapTimeDisplay.textContent = formatTime(lapTimeMs);
     startButton.disabled = false;
     startButton.classList.remove('active');
     
-    // Manually fire credits changed since we don't have a robust event for it yet, 
-    // or rely on gameLoop emitting it (will fix in a moment).
-    // Let's assume we update it here for now directly, but ideally via 'credits:changed'.
+    if (isPersonalBest) {
+        AudioCues.personalBest();
+        
+        // Burst particles at lap time display
+        const rect = lapTimeDisplay.getBoundingClientRect();
+        createParticleBurst(rect.left + rect.width / 2, rect.top + rect.height / 2, 40, ['#B26BFF', '#F5F7FA']);
+        
+        lapTimeDisplay.style.color = 'var(--accent-sector)';
+        setTimeout(() => lapTimeDisplay.style.color = '', 2000);
+    } else {
+        AudioCues.lapComplete();
+    }
+
+    // Floating text for profit
+    const creditsRect = creditsDisplay.getBoundingClientRect();
+    createNumberPopup(`+${formatCredits(profit)}`, creditsRect.left + creditsRect.width / 2, creditsRect.top);
+    AudioCues.creditsIncrease();
 }
 
 function handleCreditsChanged({ total }) {

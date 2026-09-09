@@ -1,1 +1,31 @@
-/* TBD */
+/* Number Popup Animation */
+.number-popup {
+    position: fixed;
+    font-family: ui-monospace, "SF Mono", Consolas, "Courier New", monospace;
+    font-size: 24px;
+    font-weight: 800;
+    pointer-events: none;
+    z-index: 1000;
+    opacity: 0;
+    transform: translate(-50%, 0);
+    text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+}
+
+.number-popup.animate {
+    animation: floatUp 1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+@keyframes floatUp {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, 0) scale(0.5);
+    }
+    20% {
+        opacity: 1;
+        transform: translate(-50%, -20px) scale(1.2);
+    }
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -60px) scale(1);
+    }
+}
