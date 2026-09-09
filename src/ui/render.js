@@ -84,7 +84,7 @@ export function initRender(gameState) {
             </div>
         </div>
     </div>
-  `;
+  `);
 
   // Settings & Theme Logic
   const themeToggle = document.getElementById("theme-toggle");
