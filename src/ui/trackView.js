@@ -32,9 +32,14 @@ export async function initTrackView(container, state) {
     EventBus.on('lap:progress', handleLapProgress);
     EventBus.on('lap:completed', handleLapCompleted);
     EventBus.on('track:switched', handleTrackSwitched);
+    EventBus.on('car:switched', handleCarSwitched);
 }
 
 function handleTrackSwitched() {
+    loadTrackAndCar(stateRef.session.currentTrackId, stateRef.session.currentCarId);
+}
+
+function handleCarSwitched() {
     loadTrackAndCar(stateRef.session.currentTrackId, stateRef.session.currentCarId);
 }
 

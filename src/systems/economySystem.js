@@ -1,5 +1,6 @@
 import { UPGRADES_CONFIG, calculateUpgradeCost } from '../config/upgrades.config.js';
 import { TRACKS_CONFIG } from '../config/tracks.config.js';
+import { CARS_CONFIG } from '../config/cars.config.js';
 import { saveGame } from '../state/saveLoad.js';
 import { EventBus } from '../utils/eventBus.js';
 
@@ -93,4 +94,48 @@ export function switchTrack(trackId) {
     saveGame(state);
     
     EventBus.emit('track:switched', { id: trackId });
+}
+
+/**
+ * Attempts to purchase a car.
+ * @param {string} carId 
+ * @returns {boolean}
+ */
+export function buyCar(carId) {
+    const config = CARS_CONFIG[carId];
+    if (!config) return false;
+    
+    if (state.cars[carId] && state.cars[carId].owned) {
+        return false; // Already owned
+    }
+    
+    if (state.economy.credits < config.cost) return false;
+    
+    state.economy.credits -= config.cost;
+    
+    if (!state.cars[carId]) {
+        state.cars[carId] = { engineLevel: 0, aeroLevel: 0, tyreLevel: 0 };
+    }
+    state.cars[carId].owned = true;
+    
+    saveGame(state);
+    
+    EventBus.emit('credits:changed', { total: state.economy.credits });
+    EventBus.emit('car:purchased', { id: carId });
+    
+    return true;
+}
+
+/**
+ * Switches the current active car.
+ * @param {string} carId 
+ */
+export function switchCar(carId) {
+    if (!state.cars[carId] || !state.cars[carId].owned) return;
+    if (state.runtime && state.runtime.lapActive) return; // Cannot switch while racing
+    
+    state.session.currentCarId = carId;
+    saveGame(state);
+    
+    EventBus.emit('car:switched', { id: carId });
 }

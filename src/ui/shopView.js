@@ -1,6 +1,8 @@
 import { UPGRADES_CONFIG, calculateUpgradeCost } from '../config/upgrades.config.js';
 import { TRACKS_CONFIG } from '../config/tracks.config.js';
-import { buyUpgrade, buyTrack, switchTrack } from '../systems/economySystem.js';
+import { CARS_CONFIG } from '../config/cars.config.js';
+import { buyUpgrade, buyTrack, switchTrack, buyCar, switchCar } from '../systems/economySystem.js';
+import { formatTime } from '../utils/formatNumber.js';
 import { EventBus } from '../utils/eventBus.js';
 import { formatCredits } from '../utils/formatNumber.js';
 import { AudioCues } from '../audio/audioManager.js';
@@ -21,6 +23,21 @@ export function initShopView(container, state) {
     EventBus.on('upgrade:purchased', handleUpgradePurchased);
     EventBus.on('track:purchased', handleTrackPurchased);
     EventBus.on('track:switched', renderContent);
+    EventBus.on('car:purchased', renderContent);
+    EventBus.on('car:switched', handleCarSwitched);
+    EventBus.on('lap:completed', updateBestTimesIfGarage);
+}
+
+function updateBestTimesIfGarage() {
+    if (currentTab === 'garage') {
+        renderContent();
+    }
+}
+
+function handleCarSwitched() {
+    // When car switches, we might be on 'upgrades' tab which shows car-specific upgrades. 
+    // We should re-render current tab.
+    renderContent();
 }
 
 function renderBase() {
@@ -29,6 +46,7 @@ function renderBase() {
             <div class="shop-tabs">
                 <button id="tab-upgrades" class="tab-btn active">UPGRADES</button>
                 <button id="tab-tracks" class="tab-btn">TRACKS</button>
+                <button id="tab-garage" class="tab-btn">GARAGE</button>
             </div>
             <div id="shop-content-area"></div>
         </div>
@@ -36,6 +54,7 @@ function renderBase() {
     
     document.getElementById('tab-upgrades').addEventListener('click', () => switchTab('upgrades'));
     document.getElementById('tab-tracks').addEventListener('click', () => switchTab('tracks'));
+    document.getElementById('tab-garage').addEventListener('click', () => switchTab('garage'));
 }
 
 function switchTab(tab) {
@@ -51,6 +70,8 @@ function renderContent() {
         renderUpgrades(area);
     } else if (currentTab === 'tracks') {
         renderTracks(area);
+    } else if (currentTab === 'garage') {
+        renderGarage(area);
     }
 }
 
@@ -148,6 +169,76 @@ function renderTracks(container) {
     });
 }
 
+function renderGarage(container) {
+    let html = `<div class="upgrade-list">`;
+    
+    Object.values(CARS_CONFIG).forEach(config => {
+        const isOwned = stateRef.cars[config.id] && stateRef.cars[config.id].owned;
+        const isActive = stateRef.session.currentCarId === config.id;
+        const affordable = stateRef.economy.credits >= config.cost;
+        
+        let btnHtml = '';
+        if (isActive) {
+            btnHtml = `<button class="buy-btn disabled">ACTIVE</button>`;
+        } else if (isOwned) {
+            btnHtml = `<button class="buy-btn switch-btn" id="switch-car-btn-${config.id}">DRIVE</button>`;
+        } else {
+            btnHtml = `<button class="buy-btn ${affordable ? '' : 'disabled'}" id="buy-car-btn-${config.id}">
+                ${formatCredits(config.cost)}
+            </button>`;
+        }
+
+        let timesHtml = '';
+        if (isOwned) {
+            timesHtml = `<div style="font-size: 11px; margin-top: 10px; color: #8A8F9A;">`;
+            Object.values(TRACKS_CONFIG).forEach(track => {
+                if (stateRef.tracks[track.id] && stateRef.tracks[track.id].owned) {
+                    const time = stateRef.bestTimes[`${config.id}:${track.id}`];
+                    timesHtml += `<div>${track.name}: ${time ? formatTime(time) : '--:--.---'}</div>`;
+                }
+            });
+            timesHtml += `</div>`;
+        }
+
+        html += `
+            <div class="upgrade-item">
+                <div class="upgrade-info">
+                    <span class="upgrade-name">${config.name}</span>
+                    <span class="upgrade-desc">Base Perf: ${config.baseEngine.toFixed(1)} E / ${config.baseAero.toFixed(1)} A / ${config.baseTyre.toFixed(1)} T</span>
+                    ${timesHtml}
+                </div>
+                ${btnHtml}
+            </div>
+        `;
+    });
+    
+    html += `</div>`;
+    container.innerHTML = html;
+    
+    Object.values(CARS_CONFIG).forEach(config => {
+        const isOwned = stateRef.cars[config.id] && stateRef.cars[config.id].owned;
+        const isActive = stateRef.session.currentCarId === config.id;
+        
+        if (!isActive && isOwned) {
+            document.getElementById(`switch-car-btn-${config.id}`).addEventListener('click', () => {
+                if (!stateRef.runtime.lapActive) {
+                    AudioCues.buttonClick();
+                    switchCar(config.id);
+                }
+            });
+        } else if (!isActive && !isOwned) {
+            const btn = document.getElementById(`buy-car-btn-${config.id}`);
+            btn.addEventListener('click', () => {
+                if (buyCar(config.id)) {
+                    AudioCues.purchase();
+                    const rect = btn.getBoundingClientRect();
+                    createParticleBurst(rect.left + rect.width / 2, rect.top + rect.height / 2, 30, ['#E63946', '#F5F7FA']);
+                }
+            });
+        }
+    });
+}
+
 function getCurrentLevel(config) {
     if (config.type === 'per-car') {
         const carId = stateRef.session.currentCarId;
@@ -176,6 +267,21 @@ function updateButtonStates() {
             const isOwned = stateRef.tracks[config.id] && stateRef.tracks[config.id].owned;
             if (!isOwned) {
                 const btn = document.getElementById(`buy-track-btn-${config.id}`);
+                if (btn) {
+                    const affordable = stateRef.economy.credits >= config.cost;
+                    if (affordable) {
+                        btn.classList.remove('disabled');
+                    } else {
+                        btn.classList.add('disabled');
+                    }
+                }
+            }
+        });
+    } else if (currentTab === 'garage') {
+        Object.values(CARS_CONFIG).forEach(config => {
+            const isOwned = stateRef.cars[config.id] && stateRef.cars[config.id].owned;
+            if (!isOwned) {
+                const btn = document.getElementById(`buy-car-btn-${config.id}`);
                 if (btn) {
                     const affordable = stateRef.economy.credits >= config.cost;
                     if (affordable) {

@@ -1,5 +1,49 @@
-<svg viewBox="0 0 1000 600" width="100% " height="100%" xmlns="http://www.w3.org/2000/svg">
-  <!-- Decorative background/grass -->
+<svg viewBox="0 0 1000 600" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+<!--
+  Track: Karting Circuit
+  Direction: clockwise
+  Turns: 4
+  Length: N/A (fictional karting track)
+  
+  SECTOR ENCODING:
+  ================
+  Sectors are encoded in multiple ways for flexibility:
+  
+  1. data-sectors attribute on #raceline: "0,0.33,0.66,1.0"
+     Format: "s1_start,s2_start,s3_start,s3_end" as fractions of total path length.
+     Use with path.getTotalLength() * fraction to get the point at each boundary.
+     Example JS:
+       const raceline = document.getElementById('raceline');
+       const totalLen = raceline.getTotalLength();
+       const sectors = raceline.dataset.sectors.split(',').map(Number);
+       const sector2Start = raceline.getPointAtLength(totalLen * sectors[1]);
+  
+  2. Individual <path> elements with data-sector="N" attribute (N = 1, 2, or 3).
+     These are visual overlays colored per sector.
+     To change a sector color:
+       document.querySelector('[data-sector="1"]').style.stroke = '#YOUR_COLOR';
+  
+  3. Sector boundary <line> elements with data-sector-boundary="N-M".
+     These mark where sectors transition visually.
+  
+  CHANGING COLORS:
+  ================
+  - Sector 1 (Red):   stroke on path[data-sector="1"]  → default #FF3333
+  - Sector 2 (Green): stroke on path[data-sector="2"]  → default #33FF33  
+  - Sector 3 (Blue):  stroke on path[data-sector="3"]  → default #3333FF
+  - Boundary markers: stroke on line.sector-marker      → default #FFFFFF
+  - Track surface:    (no outline for karting, background only)
+  - Raceline road:    stroke on #raceline                → default #333945
+  - Background:       fill on background <rect>          → default #1A1F24
+  - Start/Finish:     stroke on #start-finish            → default #E7E9EE
+  
+  SECTOR DESCRIPTIONS:
+  ====================
+  Sector 1: Start/Finish straight → Turn 1 → back straight
+  Sector 2: Turn 2 → top straight → Turn 3
+  Sector 3: Turn 3 → front straight → Turn 4 → Finish
+-->
+  <!-- Background -->
   <rect width="1000" height="600" fill="#1A1F24" />
   
   <!-- The main raceline that the car follows -->
@@ -9,8 +53,50 @@
         stroke="#333945" 
         stroke-width="30" 
         stroke-linejoin="round" 
-        stroke-linecap="round" />
+        stroke-linecap="round"
+        data-sectors="0,0.33,0.66,1.0"/>
+  
+  <!-- Sector 1: Start → Turn 1 → back straight (bottom-right + right side) -->
+  <path data-sector="1" 
+        d="M 500,500 L 800,500 A 50 50 0 0 0 850,450 L 850,300" 
+        fill="none" 
+        stroke="#FF3333" 
+        stroke-width="3" 
+        stroke-linecap="round"
+        stroke-opacity="0.85"/>
+  
+  <!-- Sector 2: Top-right → top straight → top-left -->
+  <path data-sector="2" 
+        d="M 850,300 L 850,150 A 50 50 0 0 0 800,100 L 200,100 A 50 50 0 0 0 150,150 L 150,300" 
+        fill="none" 
+        stroke="#33FF33" 
+        stroke-width="3" 
+        stroke-linecap="round"
+        stroke-opacity="0.85"/>
+  
+  <!-- Sector 3: Bottom-left → front straight → finish -->
+  <path data-sector="3" 
+        d="M 150,300 L 150,450 A 50 50 0 0 0 200,500 L 500,500" 
+        fill="none" 
+        stroke="#3333FF" 
+        stroke-width="3" 
+        stroke-linecap="round"
+        stroke-opacity="0.85"/>
+  
+  <!-- Sector 1→2 boundary marker -->
+  <line class="sector-marker" 
+        data-sector-boundary="1-2"
+        x1="835" y1="300" 
+        x2="865" y2="300" 
+        stroke="#FFFFFF" stroke-width="2" stroke-dasharray="4,4"/>
+  
+  <!-- Sector 2→3 boundary marker -->
+  <line class="sector-marker" 
+        data-sector-boundary="2-3"
+        x1="135" y1="300" 
+        x2="165" y2="300" 
+        stroke="#FFFFFF" stroke-width="2" stroke-dasharray="4,4"/>
         
   <!-- Start/Finish line -->
-  <line x1="500" y1="480" x2="500" y2="520" stroke="#E7E9EE" stroke-width="5" stroke-dasharray="5,5" />
+  <line id="start-finish" x1="500" y1="480" x2="500" y2="520" stroke="#E7E9EE" stroke-width="5" stroke-dasharray="5,5" />
 </svg>
