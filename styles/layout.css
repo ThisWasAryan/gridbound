@@ -1,50 +1,128 @@
 #game-container {
-    width: 1200px;
-    height: 800px;
-    background-color: var(--bg-panel);
-    border-radius: 12px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-    display: flex;
-    flex-direction: row;
-    overflow: hidden;
+  width: 100vw;
+  height: 100vh;
+  background-color: var(--bg-panel);
+  display: flex;
+  flex-direction: row;
+  overflow: hidden;
+  position: relative; /* ensure absolute children stay within container */
+}
+
+#game-title {
+  position: absolute;
+  top: 15px;
+  left: 50%;
+  transform: translateX(-50%);
+  margin: 0;
+  font-size: 28px;
+  font-weight: 900;
+  letter-spacing: 6px;
+  color: rgba(255, 255, 255, 0.25);
+  z-index: 10;
+  pointer-events: none;
+  font-family: 'Inter', -apple-system, sans-serif;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  white-space: nowrap;
 }
 
 #main-view {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 #track-section {
-    flex: 1;
-    position: relative;
-    background-color: #1A1F24;
+  flex: 1;
+  min-height: 0;
+  position: relative;
+  background-color: #1a1f24;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+}
+
+.track-name-overlay {
+  font-size: 24px;
+  font-weight: bold;
+  color: var(--text-primary);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  z-index: 10;
+  pointer-events: none;
+  margin-bottom: 10px;
 }
 
 .track-container {
-    width: 100%;
-    height: 100%;
+  flex: 1;
+  width: 100%;
+  height: 100%;
+  min-height: 0; /* allows it to shrink */
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .track-container svg {
-    width: 100%;
-    height: 100%;
+  width: 100%;
+  height: 100%;
 }
 
 #telemetry-section {
-    height: 120px;
-    background-color: var(--bg-panel);
-    border-top: 2px solid #2A2F3A;
-    display: flex;
-    align-items: center;
-    padding: 0 40px;
+  height: 120px;
+  flex-shrink: 0;
+  min-height: 120px;
+  background-color: var(--bg-panel);
+  border-top: 2px solid #2a2f3a;
+  display: flex;
+  align-items: center;
+  padding: 0 40px;
 }
 
 #side-panel {
-    width: 400px;
-    background-color: var(--bg-panel);
-    border-left: 2px solid #2A2F3A;
-    display: flex;
+  width: 400px;
+  background-color: var(--bg-panel);
+  border-left: 2px solid #2a2f3a;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+@media (max-width: 768px) {
+  #game-container {
     flex-direction: column;
-    overflow-y: auto;
+  }
+
+  #track-section {
+    padding: 10px;
+    padding-top: 60px; /* space for game title */
+    flex-direction: column-reverse; /* track above, name below */
+  }
+
+  .track-name-overlay {
+    font-size: 16px;
+    text-align: center;
+    margin-bottom: 0;
+    margin-top: 10px;
+  }
+
+  #side-panel {
+    width: 100%;
+    border-left: none;
+    border-top: 2px solid #2a2f3a;
+    flex: 1; /* allow it to grow in column mode */
+  }
+
+  #telemetry-section {
+    padding: 0 15px;
+    height: auto;
+    min-height: 80px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  /* Adjust map height on mobile */
+  #main-view {
+    flex: none;
+    height: 50vh;
+  }
 }

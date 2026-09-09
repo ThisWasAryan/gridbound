@@ -1,0 +1,75 @@
+{
+  "vehicle_model": {
+    "max_speed": 340.0,
+    "max_lateral_g": 4.0,
+    "brake_g": 4.5,
+    "accel_g": 2.0,
+    "min_speed": 45.0
+  },
+  "corners": [
+    {
+      "turn_in": 12,
+      "apex": 16,
+      "exit": 19,
+      "braking": 16,
+      "min_speed_kmh": 76.99222502739183,
+      "entry_speed_kmh": 107.59615176061678
+    },
+    {
+      "turn_in": 60,
+      "apex": 70,
+      "exit": 73,
+      "braking": 68,
+      "min_speed_kmh": 110.96581943033868,
+      "entry_speed_kmh": 116.93459584993795
+    },
+    {
+      "turn_in": 172,
+      "apex": 181,
+      "exit": 186,
+      "braking": 179,
+      "min_speed_kmh": 100.1912960014775,
+      "entry_speed_kmh": 114.99173205387402
+    },
+    {
+      "turn_in": 282,
+      "apex": 286,
+      "exit": 289,
+      "braking": 285,
+      "min_speed_kmh": 104.61781893625694,
+      "entry_speed_kmh": 117.46243658416813
+    },
+    {
+      "turn_in": 372,
+      "apex": 384,
+      "exit": 389,
+      "braking": 384,
+      "min_speed_kmh": 58.92911719189551,
+      "entry_speed_kmh": 107.54635906413708
+    },
+    {
+      "turn_in": 404,
+      "apex": 410,
+      "exit": 416,
+      "braking": 410,
+      "min_speed_kmh": 85.68257865067005,
+      "entry_speed_kmh": 112.70225656796383
+    },
+    {
+      "turn_in": 505,
+      "apex": 509,
+      "exit": 513,
+      "braking": 509,
+      "min_speed_kmh": 48.754188443788074,
+      "entry_speed_kmh": 91.59916084836208
+    },
+    {
+      "turn_in": 699,
+      "apex": 4,
+      "exit": 7,
+      "braking": 3,
+      "min_speed_kmh": 87.39559744001211,
+      "entry_speed_kmh": 113.49152376466282
+    }
+  ]
+}

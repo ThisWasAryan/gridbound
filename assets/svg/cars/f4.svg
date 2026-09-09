@@ -1,25 +1,21 @@
-<svg viewBox="-40 -20 80 40" width="80" height="40" xmlns="http://www.w3.org/2000/svg">
-  <!-- Front Wing -->
-  <rect x="25" y="-15" width="8" height="30" rx="2" fill="#1D2129" />
-  
-  <!-- Main Body / Monocoque -->
-  <path d="M -30,-8 L 25,-4 L 25,4 L -30,8 Z" fill="#38bdf8" />
-  
-  <!-- Sidepods -->
-  <rect x="-10" y="-12" width="20" height="4" rx="2" fill="#38bdf8" />
-  <rect x="-10" y="8" width="20" height="4" rx="2" fill="#38bdf8" />
-  
-  <!-- Rear Wing -->
-  <rect x="-35" y="-12" width="6" height="24" rx="1" fill="#1D2129" />
-  
-  <!-- Driver -->
-  <circle cx="-5" cy="0" r="4" fill="#E7E9EE" stroke="#1D2129" stroke-width="1" />
-  
-  <!-- Front Wheels -->
-  <rect x="15" y="-18" width="12" height="6" rx="2" fill="#14161B" />
-  <rect x="15" y="12" width="12" height="6" rx="2" fill="#14161B" />
-  
-  <!-- Rear Wheels -->
-  <rect x="-25" y="-20" width="14" height="8" rx="2" fill="#14161B" />
-  <rect x="-25" y="12" width="14" height="8" rx="2" fill="#14161B" />
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-12 -20 24 40" width="36" height="60">
+    <g transform="rotate(90)">
+        <!-- Tyres -->
+        <rect x="-10" y="-14" width="4" height="8" rx="1" fill="#14161b" stroke="#8a8f9a" stroke-width="0.5"/>
+        <rect x="6" y="-14" width="4" height="8" rx="1" fill="#14161b" stroke="#8a8f9a" stroke-width="0.5"/>
+        <rect x="-11" y="8" width="5" height="9" rx="1.5" fill="#14161b" stroke="#8a8f9a" stroke-width="0.5"/>
+        <rect x="6" y="8" width="5" height="9" rx="1.5" fill="#14161b" stroke="#8a8f9a" stroke-width="0.5"/>
+        
+        <!-- Front Wing -->
+        <path d="M -9 -17 L 9 -17 L 7 -15 L -7 -15 Z" fill="#242933" stroke="#e7e9ee" stroke-width="1"/>
+        
+        <!-- Main Body -->
+        <path d="M -3 -15 L 3 -15 L 5 2 L 4 12 L -4 12 L -5 2 Z" fill="#242933" stroke="#e7e9ee" stroke-width="1.5"/>
+        
+        <!-- Rear Wing -->
+        <path d="M -8 13 L 8 13 L 8 16 L -8 16 Z" fill="#242933" stroke="#e7e9ee" stroke-width="1"/>
+        
+        <!-- Cockpit -->
+        <path d="M -2 -2 C -2 3, 2 3, 2 -2 Z" fill="#14161b" stroke="#8a8f9a" stroke-width="1"/>
+    </g>
 </svg>

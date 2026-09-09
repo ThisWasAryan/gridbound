@@ -1,0 +1,28 @@
+.endgame-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.9);
+  z-index: 3000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  color: white;
+  transition: opacity 0.5s;
+}
+
+.endgame-overlay.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.endgame-modal {
+  background: linear-gradient(135deg, #FFD700 0%, #B8860B 100%);
+  padding: 50px;
+  border-radius: 12px;
+  color: black;
+  box-shadow: 0 0 50px rgba(255, 215, 0, 0.5);
+}

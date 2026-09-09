@@ -1,20 +1,47 @@
 export const CARS_CONFIG = {
-    kart: {
-        id: 'kart',
-        name: 'Kart',
-        baseEngine: 1.0,
-        baseAero: 1.0,
-        baseTyre: 1.0,
-        cost: 0,
-        svgPath: 'assets/svg/cars/kart.svg'
-    },
-    f4: {
-        id: 'f4',
-        name: 'Formula 4',
-        baseEngine: 2.5,
-        baseAero: 3.0,
-        baseTyre: 2.8,
-        cost: 250000,
-        svgPath: 'assets/svg/cars/f4.svg'
-    }
+  kart: {
+    id: "kart",
+    name: "Kart",
+    baseEngine: 1.0,
+    baseAero: 1.0,
+    baseTyre: 1.0,
+    cost: 0,
+    svgPath: "assets/svg/cars/kart.svg",
+  },
+  f4: {
+    id: "f4",
+    name: "Formula 4",
+    baseEngine: 2.5,
+    baseAero: 3.0,
+    baseTyre: 2.8,
+    cost: 250000,
+    svgPath: "assets/svg/cars/f4.svg",
+  },
+  f3: {
+    id: "f3",
+    name: "Formula 3",
+    baseEngine: 4.5,
+    baseAero: 6.0,
+    baseTyre: 5.5,
+    cost: 2500000,
+    svgPath: "assets/svg/cars/f3.svg",
+  },
+  f2: {
+    id: "f2",
+    name: "Formula 2",
+    baseEngine: 8.0,
+    baseAero: 11.0,
+    baseTyre: 10.5,
+    cost: 25000000,
+    svgPath: "assets/svg/cars/f2.svg",
+  },
+  f1: {
+    id: "f1",
+    name: "Formula 1",
+    baseEngine: 15.0,
+    baseAero: 22.0,
+    baseTyre: 20.0,
+    cost: 500000000,
+    svgPath: "assets/svg/cars/f1.svg",
+  }
 };

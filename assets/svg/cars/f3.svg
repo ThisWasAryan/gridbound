@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-12 -22 24 44" width="36" height="66">
+    <g transform="rotate(90)">
+        <!-- Tyres -->
+        <rect x="-10" y="-15" width="4.5" height="8.5" rx="1" fill="#14161b" stroke="#8a8f9a" stroke-width="0.5"/>
+        <rect x="5.5" y="-15" width="4.5" height="8.5" rx="1" fill="#14161b" stroke="#8a8f9a" stroke-width="0.5"/>
+        <rect x="-11" y="9" width="5.5" height="10" rx="1.5" fill="#14161b" stroke="#8a8f9a" stroke-width="0.5"/>
+        <rect x="5.5" y="9" width="5.5" height="10" rx="1.5" fill="#14161b" stroke="#8a8f9a" stroke-width="0.5"/>
+        
+        <!-- Front Wing -->
+        <path d="M -10 -19 L 10 -19 L 8 -16 L -8 -16 Z" fill="#242933" stroke="#38bdf8" stroke-width="1.5"/>
+        
+        <!-- Main Body -->
+        <path d="M -2 -16 L 2 -16 L 5 4 L 4 14 L -4 14 L -5 4 Z" fill="#242933" stroke="#e7e9ee" stroke-width="1.5"/>
+        
+        <!-- Rear Wing -->
+        <path d="M -9 15 L 9 15 L 9 18 L -9 18 Z" fill="#242933" stroke="#38bdf8" stroke-width="1.5"/>
+        
+        <!-- Cockpit -->
+        <path d="M -2 -1 C -2 4, 2 4, 2 -1 Z" fill="#14161b" stroke="#8a8f9a" stroke-width="1"/>
+        
+        <!-- Halo -->
+        <path d="M -2.5 -1 C -2.5 -4, 2.5 -4, 2.5 -1" fill="none" stroke="#e7e9ee" stroke-width="1"/>
+        <line x1="0" y1="-4" x2="0" y2="-1" stroke="#e7e9ee" stroke-width="1"/>
+    </g>
+</svg>

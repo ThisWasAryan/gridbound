@@ -1,56 +1,79 @@
 .telemetry-panel {
-    display: flex;
-    width: 100%;
-    justify-content: space-between;
-    align-items: center;
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .telemetry-data {
-    display: flex;
-    gap: 40px;
+  display: flex;
+  gap: 40px;
 }
 
 .data-block {
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
 }
 
 .data-block .label {
-    font-size: 12px;
-    color: #8A8F9A;
-    letter-spacing: 1px;
-    font-weight: 600;
+  font-size: 12px;
+  color: #8a8f9a;
+  letter-spacing: 1px;
+  font-weight: 600;
 }
 
 .data-block .value {
-    font-size: 32px;
-    font-weight: 700;
-    color: var(--text-data);
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--text-data);
 }
 
 .primary-btn {
-    background-color: var(--accent-primary);
-    color: white;
-    border: none;
-    padding: 15px 40px;
-    font-size: 20px;
-    font-weight: 800;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: transform 0.1s, background-color 0.2s;
+  background-color: var(--accent-primary);
+  color: white;
+  border: none;
+  padding: 15px 40px;
+  font-size: 20px;
+  font-weight: 800;
+  border-radius: 8px;
+  cursor: pointer;
+  transition:
+    transform 0.1s,
+    background-color 0.2s;
 }
 
 .primary-btn:hover {
-    background-color: #F84A58;
+  background-color: #f84a58;
 }
 
-.primary-btn:active, .primary-btn.active {
-    transform: scale(0.95);
-    background-color: #CC2B37;
+.primary-btn:active,
+.primary-btn.active {
+  transform: scale(0.95);
+  background-color: #cc2b37;
 }
 
 .primary-btn:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-    transform: none;
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+@media (max-width: 768px) {
+  .telemetry-panel {
+    flex-wrap: wrap;
+    gap: 15px;
+    justify-content: center;
+  }
+  .telemetry-data {
+    gap: 15px;
+  }
+  .data-block .value {
+    font-size: 24px;
+    white-space: nowrap; /* prevent numbers from wrapping */
+  }
+  .primary-btn {
+    padding: 10px 20px;
+    font-size: 16px;
+    width: 100%;
+  }
 }

@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-14 -24 28 48" width="42" height="72">
+    <g transform="rotate(90)">
+        <!-- Tyres -->
+        <rect x="-11" y="-16" width="5" height="9" rx="1" fill="#14161b" stroke="#8a8f9a" stroke-width="0.5"/>
+        <rect x="6" y="-16" width="5" height="9" rx="1" fill="#14161b" stroke="#8a8f9a" stroke-width="0.5"/>
+        <rect x="-12" y="10" width="6" height="11" rx="1.5" fill="#14161b" stroke="#8a8f9a" stroke-width="0.5"/>
+        <rect x="6" y="10" width="6" height="11" rx="1.5" fill="#14161b" stroke="#8a8f9a" stroke-width="0.5"/>
+        
+        <!-- Front Wing -->
+        <path d="M -11 -21 L 11 -21 L 9 -17 L -9 -17 Z" fill="#242933" stroke="#ffb020" stroke-width="1.5"/>
+        <path d="M -8 -19 L 8 -19" stroke="#ffb020" stroke-width="0.5"/>
+        
+        <!-- Main Body -->
+        <path d="M -2 -17 L 2 -17 L 6 5 L 5 15 L -5 15 L -6 5 Z" fill="#242933" stroke="#e7e9ee" stroke-width="1.5"/>
+        
+        <!-- Sidepods -->
+        <path d="M -6 5 L -9 6 L -9 12 L -5 13 Z" fill="#242933" stroke="#8a8f9a" stroke-width="1"/>
+        <path d="M 6 5 L 9 6 L 9 12 L 5 13 Z" fill="#242933" stroke="#8a8f9a" stroke-width="1"/>
+        
+        <!-- Rear Wing -->
+        <path d="M -10 16 L 10 16 L 10 19 L -10 19 Z" fill="#242933" stroke="#ffb020" stroke-width="1.5"/>
+        
+        <!-- Cockpit -->
+        <path d="M -2.5 0 C -2.5 5, 2.5 5, 2.5 0 Z" fill="#14161b" stroke="#8a8f9a" stroke-width="1"/>
+        
+        <!-- Halo -->
+        <path d="M -3 0 C -3 -3.5, 3 -3.5, 3 0" fill="none" stroke="#e7e9ee" stroke-width="1"/>
+        <line x1="0" y1="-3.5" x2="0" y2="0" stroke="#e7e9ee" stroke-width="1"/>
+    </g>
+</svg>

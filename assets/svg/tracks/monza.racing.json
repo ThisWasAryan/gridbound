@@ -1,0 +1,10 @@
+{
+  "vehicle_model": {
+    "max_speed": 340.0,
+    "max_lateral_g": 4.0,
+    "brake_g": 4.5,
+    "accel_g": 2.0,
+    "min_speed": 45.0
+  },
+  "corners": []
+}

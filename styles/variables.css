@@ -1,9 +1,9 @@
 :root {
-  --bg-void:        #14161B;
-  --bg-panel:       #1D2129;
-  --text-primary:   #E7E9EE;
-  --text-data:      #F5F7FA;
-  --accent-sector:  #B26BFF;
-  --accent-caution: #FFB020;
-  --accent-primary: #E63946;
+  --bg-void: #14161b;
+  --bg-panel: #1d2129;
+  --text-primary: #e7e9ee;
+  --text-data: #f5f7fa;
+  --accent-sector: #b26bff;
+  --accent-caution: #ffb020;
+  --accent-primary: #e63946;
 }
