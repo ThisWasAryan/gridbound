@@ -69,6 +69,41 @@ function startMiniGame() {
   cursorDirection = 1;
   speed = 2 + Math.random(); // Add some variance
 
+  // Adjust zones based on pit crew level (0 to max)
+  const level = stateRef.team.pitCrewLevel || 0;
+  
+  // Base perfect size is 4% (48 to 52). Each level adds 0.5%, up to a max of 20%
+  let perfectWidth = Math.min(20, 4 + level * 0.5); 
+  // Base good size is 20% (40 to 60). Each level adds 1.0%, up to a max of 60%
+  let goodWidth = Math.min(60, 20 + level * 1.0); 
+
+  stateRef.pitStopBounds = {
+    perfectStart: 50 - perfectWidth / 2,
+    perfectEnd: 50 + perfectWidth / 2,
+    goodStart: 50 - goodWidth / 2,
+    goodEnd: 50 + goodWidth / 2,
+  };
+
+  // Adjust DOM elements in pitstop-slider
+  const perfectZone = pitStopOverlay.querySelector(".perfect-zone");
+  const goodZoneLeft = pitStopOverlay.querySelector(".good-zone-left");
+  const goodZoneRight = pitStopOverlay.querySelector(".good-zone-right");
+  const badZoneLeft = pitStopOverlay.querySelector(".bad-zone-left");
+  const badZoneRight = pitStopOverlay.querySelector(".bad-zone-right");
+
+  badZoneLeft.style.width = `${stateRef.pitStopBounds.goodStart}%`;
+  goodZoneLeft.style.left = `${stateRef.pitStopBounds.goodStart}%`;
+  goodZoneLeft.style.width = `${stateRef.pitStopBounds.perfectStart - stateRef.pitStopBounds.goodStart}%`;
+  
+  perfectZone.style.left = `${stateRef.pitStopBounds.perfectStart}%`;
+  perfectZone.style.width = `${perfectWidth}%`;
+
+  goodZoneRight.style.left = `${stateRef.pitStopBounds.perfectEnd}%`;
+  goodZoneRight.style.width = `${stateRef.pitStopBounds.goodEnd - stateRef.pitStopBounds.perfectEnd}%`;
+  
+  badZoneRight.style.left = `${stateRef.pitStopBounds.goodEnd}%`;
+  badZoneRight.style.width = `${100 - stateRef.pitStopBounds.goodEnd}%`;
+
   lastTime = performance.now();
   animationId = requestAnimationFrame(animateSlider);
 }
@@ -98,16 +133,13 @@ function handleActionClick() {
   isActive = false;
   cancelAnimationFrame(animationId);
 
-  // Evaluate cursor position (0 to 100)
-  // Perfect: 45 to 55
-  // Good: 30 to 45, 55 to 70
-  // Bad: < 30, > 70
-
   let quality = "BAD";
-  if (cursorPosition >= 45 && cursorPosition <= 55) {
-    quality = "PERFECT";
-  } else if (cursorPosition >= 30 && cursorPosition <= 70) {
-    quality = "GOOD";
+  if (stateRef.pitStopBounds) {
+    if (cursorPosition >= stateRef.pitStopBounds.perfectStart && cursorPosition <= stateRef.pitStopBounds.perfectEnd) {
+      quality = "PERFECT";
+    } else if (cursorPosition >= stateRef.pitStopBounds.goodStart && cursorPosition <= stateRef.pitStopBounds.goodEnd) {
+      quality = "GOOD";
+    }
   }
 
   resolvePitStop(quality);

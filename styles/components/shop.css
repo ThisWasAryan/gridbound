@@ -79,6 +79,7 @@
 
 .shop-tabs {
   display: flex;
+  flex-wrap: wrap;
   background-color: var(--bg-surface);
   border-radius: 8px;
   overflow: hidden;
@@ -87,17 +88,18 @@
 
 .tab-btn {
   flex: 1;
+  min-width: max-content;
   background: none;
   border: none;
   color: var(--text-secondary);
-  padding: 10px;
+  padding: 8px 4px;
   cursor: pointer;
   font-weight: 600;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
-  font-size: 12px;
+  gap: 4px;
+  font-size: 11px;
 }
 
 .tab-btn:hover:not(.disabled) {

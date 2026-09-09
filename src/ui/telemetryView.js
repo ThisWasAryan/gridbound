@@ -83,7 +83,7 @@ function handleLapProgress({ progress }) {
   lapTimeDisplay.textContent = formatTime(elapsed);
 }
 
-function handleLapCompleted({ lapTimeMs, profit, isPersonalBest }) {
+function handleLapCompleted({ lapTimeMs, profit, isPersonalBest, pitMultiplier, pitColor }) {
   isLapping = false;
   lapTimeDisplay.textContent = formatTime(lapTimeMs);
   startButton.disabled = false;
@@ -109,10 +109,19 @@ function handleLapCompleted({ lapTimeMs, profit, isPersonalBest }) {
 
   // Floating text for profit
   const creditsRect = creditsDisplay.getBoundingClientRect();
+  
+  let popupText = `+${formatCredits(profit)}`;
+  if (pitMultiplier > 1) {
+    popupText += ` (${pitMultiplier}x)`;
+  } else if (pitMultiplier === 0) {
+    popupText = `+0 (BAD PIT)`;
+  }
+
   createNumberPopup(
-    `+${formatCredits(profit)}`,
+    popupText,
     creditsRect.left + creditsRect.width / 2,
     creditsRect.top,
+    pitColor
   );
   AudioCues.creditsIncrease();
 }

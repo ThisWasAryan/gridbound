@@ -16,5 +16,5 @@ export function createNumberPopup(text, x, y, color = "#F5F7FA") {
   // Remove element after animation
   setTimeout(() => {
     popup.remove();
-  }, 1000);
+  }, 2500);
 }

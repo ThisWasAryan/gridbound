@@ -30,6 +30,7 @@ export function triggerPitStop() {
 
 export function resolvePitStop(quality) {
   state.runtime.pitStopActive = false;
+  state.runtime.lastPitStopQuality = quality;
 
   const pitCrewLevel = state.team.pitCrewLevel;
 

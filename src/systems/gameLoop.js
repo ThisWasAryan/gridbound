@@ -37,10 +37,29 @@ function completeLap() {
 
   const trackDef = TRACKS_CONFIG[state.session.currentTrackId];
   const sponsorshipMultiplier = 1 + (state.team.sponsorshipsLevel || 0) * 0.25;
-  const profit = Math.round(
+  let profit = Math.round(
     CONSTANTS.BASE_LAP_PROFIT * trackDef.profitMultiplier * sponsorshipMultiplier,
   );
   const lapTimeMs = state.runtime.expectedLapDurationMs;
+
+  let pitMultiplier = 1;
+  let pitColor = "#33ff33"; // Green for normal
+  
+  if (state.runtime.lastPitStopQuality) {
+    if (state.runtime.lastPitStopQuality === "PERFECT") {
+      pitMultiplier = 4;
+      pitColor = "#ffb020"; // Gold
+    } else if (state.runtime.lastPitStopQuality === "GOOD") {
+      pitMultiplier = 2;
+      pitColor = "#38bdf8"; // Blue
+    } else if (state.runtime.lastPitStopQuality === "BAD") {
+      pitMultiplier = 0;
+      pitColor = "#e63946"; // Red
+    }
+    state.runtime.lastPitStopQuality = null;
+  }
+  
+  profit *= pitMultiplier;
 
   // Update state
   state.economy.credits += profit;
@@ -63,6 +82,8 @@ function completeLap() {
     profit,
     isPersonalBest,
     previousBest,
+    pitMultiplier,
+    pitColor,
   });
 }
 
