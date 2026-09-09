@@ -43,13 +43,13 @@
 }
 
 .primary-btn:hover {
-  background-color: #f84a58;
+  background-color: #ff1a0f;
 }
 
 .primary-btn:active,
 .primary-btn.active {
   transform: scale(0.95);
-  background-color: #cc2b37;
+  background-color: #b80500;
 }
 
 .primary-btn:disabled {

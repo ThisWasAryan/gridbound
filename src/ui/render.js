@@ -105,12 +105,44 @@ export function initRender(gameState) {
     document.getElementById("theme-icon-dark").style.display = "block";
   }
 
-  themeToggle.addEventListener("click", () => {
-    const isLight = document.body.classList.toggle('light-mode');
-    state.settings.theme = isLight ? 'light' : 'dark';
-    
-    document.getElementById("theme-icon-light").style.display = isLight ? "none" : "block";
-    document.getElementById("theme-icon-dark").style.display = isLight ? "block" : "none";
+  themeToggle.addEventListener("click", (e) => {
+    const rect = themeToggle.getBoundingClientRect();
+    const x = rect.left + rect.width / 2;
+    const y = rect.top + rect.height / 2;
+
+    // Calculate max radius needed to cover the entire screen
+    const maxRadius = Math.hypot(
+      Math.max(x, window.innerWidth - x),
+      Math.max(y, window.innerHeight - y)
+    );
+
+    // Create a circular wipe overlay
+    const overlay = document.createElement("div");
+    const willBeLight = !document.body.classList.contains("light-mode");
+    overlay.style.cssText = `
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      z-index: 99999; pointer-events: none;
+      background: ${willBeLight ? "#ffffff" : "#14161b"};
+      clip-path: circle(0px at ${x}px ${y}px);
+      transition: clip-path 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+    `;
+    document.body.appendChild(overlay);
+
+    // Trigger the expanding circle on next frame
+    requestAnimationFrame(() => {
+      overlay.style.clipPath = `circle(${maxRadius}px at ${x}px ${y}px)`;
+    });
+
+    // Flip the theme midway through the animation
+    setTimeout(() => {
+      const isLight = document.body.classList.toggle("light-mode");
+      state.settings.theme = isLight ? "light" : "dark";
+      document.getElementById("theme-icon-light").style.display = isLight ? "none" : "block";
+      document.getElementById("theme-icon-dark").style.display = isLight ? "block" : "none";
+    }, 200);
+
+    // Remove overlay after animation completes
+    setTimeout(() => overlay.remove(), 500);
   });
 
   settingsToggle.addEventListener("click", () => {
