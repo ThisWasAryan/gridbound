@@ -344,28 +344,31 @@ function renderGarage(container) {
     const isActive = stateRef.session.currentCarId === config.id;
 
     if (!isActive && isOwned) {
-      document
-        .getElementById(`switch-car-btn-${config.id}`)
-        .addEventListener("click", () => {
+      const switchBtn = document.getElementById(`switch-car-btn-${config.id}`);
+      if (switchBtn) {
+        switchBtn.addEventListener("click", () => {
           if (!stateRef.runtime.lapActive) {
             AudioCues.buttonClick();
             switchCar(config.id);
           }
         });
+      }
     } else if (!isActive && !isOwned) {
       const btn = document.getElementById(`buy-car-btn-${config.id}`);
-      btn.addEventListener("click", () => {
-        if (buyCar(config.id)) {
-          AudioCues.purchase();
-          const rect = btn.getBoundingClientRect();
-          createParticleBurst(
-            rect.left + rect.width / 2,
-            rect.top + rect.height / 2,
-            30,
-            ["#E63946", "#F5F7FA"],
-          );
-        }
-      });
+      if (btn) {
+        btn.addEventListener("click", () => {
+          if (buyCar(config.id)) {
+            AudioCues.purchase();
+            const rect = btn.getBoundingClientRect();
+            createParticleBurst(
+              rect.left + rect.width / 2,
+              rect.top + rect.height / 2,
+              30,
+              ["#E63946", "#F5F7FA"],
+            );
+          }
+        });
+      }
     }
   });
 }
