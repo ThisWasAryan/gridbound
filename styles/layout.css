@@ -107,12 +107,11 @@
     letter-spacing: 4px;
   }
 
-  /* Top area: track + telemetry — fixed height, no growth */
+  /* Top area: track + telemetry — responsive height, no growth */
   #main-view {
     flex: none;
-    height: 42dvh;
     height: 42vh; /* fallback */
-    height: 42dvh;
+    height: clamp(240px, 40dvh, 46dvh);
     min-height: 0;
   }
 
@@ -141,12 +140,11 @@
   }
 
   #telemetry-section {
-    padding: 10px 15px;
+    padding: 10px 16px;
     height: auto;
-    min-height: 60px;
-    flex-wrap: wrap;
-    justify-content: space-around;
-    gap: 10px;
+    min-height: 50px;
+    flex-direction: column;
+    gap: 8px;
   }
 
   /* Controls bar repositioned to top on mobile */

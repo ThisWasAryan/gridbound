@@ -60,19 +60,25 @@
 
 @media (max-width: 768px) {
   .telemetry-panel {
-    flex-wrap: wrap;
-    gap: 10px;
-    justify-content: center;
+    flex-direction: column;
+    gap: 8px;
   }
   .telemetry-data {
-    gap: 15px;
+    width: 100%;
+    justify-content: space-between;
+    gap: 10px;
   }
   .data-block .label {
     font-size: 10px;
   }
   .data-block .value {
     font-size: 20px;
-    white-space: nowrap; /* prevent numbers from wrapping */
+    white-space: nowrap;
+  }
+  /* Right-align the lap time block */
+  .data-block:last-child {
+    text-align: right;
+    align-items: flex-end;
   }
   .primary-btn {
     padding: 10px 20px;
