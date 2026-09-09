@@ -93,3 +93,10 @@
   background-color: var(--bg-panel);
   border-color: var(--accent-sector);
 }
+
+@media (max-width: 768px) {
+  #onboarding-overlay {
+    align-items: flex-start;
+    padding-top: 120px;
+  }
+}

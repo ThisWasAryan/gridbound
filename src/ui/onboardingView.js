@@ -6,7 +6,7 @@ let overlayElement = null;
 const TUTORIALS = {
   start_lap: {
     id: "start_lap",
-    title: "Welcome to Formula Incremental!",
+    title: "Welcome to Gridbound!",
     message:
       "Click the START LAP button to send your kart around the track. When it crosses the finish line, you will earn Credits!",
     targetSelector: "#start-lap-btn",
@@ -54,7 +54,7 @@ export function initOnboardingView(state) {
 }
 
 function checkEconomyTutorials({ total }) {
-  if (!stateRef.onboarding.seenIds.includes("first_upgrade") && total >= 10) {
+  if (!stateRef.onboarding.seenIds.includes("first_upgrade") && total >= 150) {
     triggerTutorial("first_upgrade");
   }
 }

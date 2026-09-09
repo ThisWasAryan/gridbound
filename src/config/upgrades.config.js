@@ -3,7 +3,7 @@ export const UPGRADES_CONFIG = {
     id: "engine",
     name: "Engine",
     baseCost: 200,
-    growthRate: 1.15,
+    growthRate: 1.10,
     type: "per-car", // Engine/Aero/Tyres are per car
     description: "Improves straight-line speed.",
   },
@@ -11,7 +11,7 @@ export const UPGRADES_CONFIG = {
     id: "aero",
     name: "Aerodynamics",
     baseCost: 250,
-    growthRate: 1.15,
+    growthRate: 1.10,
     type: "per-car",
     description: "Improves cornering speed.",
   },
@@ -19,7 +19,7 @@ export const UPGRADES_CONFIG = {
     id: "tyre",
     name: "Tyres",
     baseCost: 150,
-    growthRate: 1.12,
+    growthRate: 1.10,
     type: "per-car",
     description: "Improves overall grip and acceleration.",
   },
@@ -38,6 +38,14 @@ export const UPGRADES_CONFIG = {
     growthRate: 1.2,
     type: "global",
     description: "Improves lap time consistency.",
+  },
+  sponsorships: {
+    id: "sponsorships",
+    name: "Sponsorships",
+    baseCost: 300,
+    growthRate: 1.25,
+    type: "global",
+    description: "Increases credits earned per lap.",
   },
 };
 

@@ -13,7 +13,7 @@ let gameState;
  * Initializes the application.
  */
 function init() {
-  console.log("Initializing FORMULA INCREMENTAL...");
+  console.log("Initializing GRIDBOUND...");
 
   // Load and migrate state
   gameState = loadGame();

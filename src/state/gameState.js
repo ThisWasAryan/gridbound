@@ -24,6 +24,7 @@ export function getInitialState() {
     team: {
       pitCrewLevel: 0,
       driverLevel: 0,
+      sponsorshipsLevel: 0,
       driverName: "Driver",
     },
     tracks: {
@@ -53,6 +54,7 @@ export function getInitialState() {
     settings: {
       muted: false,
       volume: 0.8,
+      theme: "dark",
     },
   };
 }

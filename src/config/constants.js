@@ -3,5 +3,5 @@ export const CONSTANTS = {
   OFFLINE_MIN_THRESHOLD_MS: 60 * 1000, // 1 minute
   MAX_OFFLINE_MS: 12 * 60 * 60 * 1000, // 12 hours
   MIN_ANIMATED_LAP_DURATION_MS: 1500, // Minimum visually animated lap duration
-  BASE_LAP_PROFIT: 100, // Starting value for Karting circuit
+  BASE_LAP_PROFIT: 150, // Starting value for Karting circuit
 };

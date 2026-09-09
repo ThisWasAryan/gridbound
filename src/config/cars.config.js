@@ -14,7 +14,7 @@ export const CARS_CONFIG = {
     baseEngine: 2.5,
     baseAero: 3.0,
     baseTyre: 2.8,
-    cost: 250000,
+    cost: 10000,
     svgPath: "assets/svg/cars/f4.svg",
   },
   f3: {
@@ -23,7 +23,7 @@ export const CARS_CONFIG = {
     baseEngine: 4.5,
     baseAero: 6.0,
     baseTyre: 5.5,
-    cost: 2500000,
+    cost: 150000,
     svgPath: "assets/svg/cars/f3.svg",
   },
   f2: {
@@ -32,7 +32,7 @@ export const CARS_CONFIG = {
     baseEngine: 8.0,
     baseAero: 11.0,
     baseTyre: 10.5,
-    cost: 25000000,
+    cost: 2000000,
     svgPath: "assets/svg/cars/f2.svg",
   },
   f1: {
@@ -41,7 +41,7 @@ export const CARS_CONFIG = {
     baseEngine: 15.0,
     baseAero: 22.0,
     baseTyre: 20.0,
-    cost: 500000000,
+    cost: 50000000,
     svgPath: "assets/svg/cars/f1.svg",
   }
 };

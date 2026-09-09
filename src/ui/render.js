@@ -35,4 +35,29 @@ export function initRender(state) {
     // Emit credits changed event to update UI
     EventBus.emit("credits:changed", { total: state.economy.credits });
   });
+
+  // Settings & Theme Logic
+  const themeToggle = document.getElementById("theme-toggle");
+  const settingsToggle = document.getElementById("settings-toggle");
+  
+  if (state.settings.theme === 'light') {
+    document.body.classList.add('light-mode');
+    document.getElementById("theme-icon-light").style.display = "none";
+    document.getElementById("theme-icon-dark").style.display = "block";
+  }
+
+  themeToggle.addEventListener("click", () => {
+    const isLight = document.body.classList.toggle('light-mode');
+    state.settings.theme = isLight ? 'light' : 'dark';
+    
+    document.getElementById("theme-icon-light").style.display = isLight ? "none" : "block";
+    document.getElementById("theme-icon-dark").style.display = isLight ? "block" : "none";
+  });
+
+  settingsToggle.addEventListener("click", () => {
+    if (confirm("WARNING: Are you sure you want to completely RESET YOUR PROGRESS? This cannot be undone.")) {
+      localStorage.removeItem("formula_incremental_save"); // old save key
+      location.reload();
+    }
+  });
 }

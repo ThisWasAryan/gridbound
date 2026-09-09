@@ -62,11 +62,11 @@ function renderBase() {
                     UPGRADES
                 </button>
                 <button id="tab-tracks" class="tab-btn">
-                    <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                    <img id="tab-tracks-icon" src="" width="16" height="16" style="object-fit: contain; filter: drop-shadow(0 0 1px rgba(255,255,255,0.2));" />
                     TRACKS
                 </button>
                 <button id="tab-garage" class="tab-btn">
-                    <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg>
+                    <img id="tab-garage-icon" src="" width="16" height="16" style="object-fit: contain; filter: drop-shadow(0 0 1px rgba(255,255,255,0.2));" />
                     GARAGE
                 </button>
                 <button id="tab-team" class="tab-btn">
@@ -104,23 +104,27 @@ function switchTab(tab) {
 }
 
 function updateTabsState() {
-  const garageLocked = !stateRef.cars['f4'] || !stateRef.cars['f4'].owned;
-  const teamLocked = !stateRef.cars['f3'] || !stateRef.cars['f3'].owned;
+  const teamLocked = !stateRef.cars['f2'] || !stateRef.cars['f2'].owned;
 
   const tabGarage = document.getElementById("tab-garage");
   const tabTeam = document.getElementById("tab-team");
+  const trackIcon = document.getElementById("tab-tracks-icon");
+  const garageIcon = document.getElementById("tab-garage-icon");
 
-  if (garageLocked) {
-    tabGarage.classList.add("disabled");
-    tabGarage.title = "Unlock by purchasing the F4 car";
-  } else {
-    tabGarage.classList.remove("disabled");
-    tabGarage.title = "";
+  if (trackIcon && stateRef.session.currentTrackId) {
+    trackIcon.src = TRACKS_CONFIG[stateRef.session.currentTrackId].svgPath;
   }
+  if (garageIcon && stateRef.session.currentCarId) {
+    garageIcon.src = CARS_CONFIG[stateRef.session.currentCarId].svgPath;
+  }
+
+  // Garage is always accessible so they can see locked cars
+  tabGarage.classList.remove("disabled");
+  tabGarage.title = "";
 
   if (teamLocked) {
     tabTeam.classList.add("disabled");
-    tabTeam.title = "Unlock by purchasing the F3 car";
+    tabTeam.title = "Unlock by purchasing the F2 car";
   } else {
     tabTeam.classList.remove("disabled");
     tabTeam.title = "";
@@ -261,19 +265,44 @@ function renderTracks(container) {
   });
 }
 
+function getCarTotalUpgrades(carId) {
+  if (!stateRef.cars[carId]) return 0;
+  const c = stateRef.cars[carId];
+  return (c.engineLevel || 0) + (c.aeroLevel || 0) + (c.tyreLevel || 0);
+}
+
 function renderGarage(container) {
   let html = `<div class="upgrade-list">`;
+
+  const prevCarMap = { f4: "kart", f3: "f4", f2: "f3", f1: "f2" };
 
   Object.values(CARS_CONFIG).forEach((config) => {
     const isOwned = stateRef.cars[config.id] && stateRef.cars[config.id].owned;
     const isActive = stateRef.session.currentCarId === config.id;
     const affordable = stateRef.economy.credits >= config.cost;
 
+    let isUnlocked = true;
+    let unlockReason = "";
+    if (prevCarMap[config.id]) {
+      const prevCar = prevCarMap[config.id];
+      const upgrades = getCarTotalUpgrades(prevCar);
+      if (upgrades < 10) {
+        isUnlocked = false;
+        const prevName = CARS_CONFIG[prevCar].name;
+        unlockReason = `Requires 10 upgrades in ${prevName} (Current: ${upgrades}/10)`;
+      }
+    }
+
     let btnHtml = "";
     if (isActive) {
       btnHtml = `<button class="buy-btn disabled">ACTIVE</button>`;
     } else if (isOwned) {
       btnHtml = `<button class="buy-btn switch-btn" id="switch-car-btn-${config.id}">DRIVE</button>`;
+    } else if (!isUnlocked) {
+      btnHtml = `<div style="font-size: 12px; color: #E63946; text-align: right; max-width: 120px;">
+                    <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none" style="vertical-align: middle;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                    <br/>${unlockReason}
+                 </div>`;
     } else {
       btnHtml = `<button class="buy-btn ${affordable ? "" : "disabled"}" id="buy-car-btn-${config.id}">
                 ${formatCredits(config.cost)}
@@ -282,7 +311,7 @@ function renderGarage(container) {
 
     let timesHtml = "";
     if (isOwned) {
-      timesHtml = `<div style="font-size: 11px; margin-top: 10px; color: #8A8F9A;">`;
+      timesHtml = `<div style="font-size: 11px; margin-top: 10px; color: var(--text-secondary);">`;
       Object.values(TRACKS_CONFIG).forEach((track) => {
         if (stateRef.tracks[track.id] && stateRef.tracks[track.id].owned) {
           const time = stateRef.bestTimes[`${config.id}:${track.id}`];
@@ -293,7 +322,7 @@ function renderGarage(container) {
     }
 
     html += `
-            <div class="upgrade-item">
+            <div class="upgrade-item ${!isUnlocked ? 'locked' : ''}">
                 <div class="upgrade-info">
                     <span class="upgrade-name" style="display:flex; align-items:center; gap:10px;">
                         <img src="${config.svgPath}" width="28" height="28" style="object-fit: contain; filter: drop-shadow(0 0 2px rgba(255,255,255,0.1));">

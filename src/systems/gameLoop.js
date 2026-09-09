@@ -36,8 +36,9 @@ function completeLap() {
   state.runtime.lapProgress = 1;
 
   const trackDef = TRACKS_CONFIG[state.session.currentTrackId];
+  const sponsorshipMultiplier = 1 + (state.team.sponsorshipsLevel || 0) * 0.25;
   const profit = Math.round(
-    CONSTANTS.BASE_LAP_PROFIT * trackDef.profitMultiplier,
+    CONSTANTS.BASE_LAP_PROFIT * trackDef.profitMultiplier * sponsorshipMultiplier,
   );
   const lapTimeMs = state.runtime.expectedLapDurationMs;
 
