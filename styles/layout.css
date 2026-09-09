@@ -90,18 +90,19 @@
 @media (max-width: 768px) {
   #game-container {
     flex-direction: column;
+    height: 100dvh; /* Fix mobile browser URL bar cutoff */
   }
 
   #track-section {
     padding: 10px;
-    padding-top: 60px; /* space for game title */
+    padding-top: 50px; /* space for toggles and title */
     flex-direction: column-reverse; /* track above, name below */
   }
 
   .track-name-overlay {
     font-size: 16px;
     text-align: center;
-    margin-bottom: 0;
+    margin-bottom: 10px; /* added space after karting circuit */
     margin-top: 10px;
   }
 
@@ -113,16 +114,35 @@
   }
 
   #telemetry-section {
-    padding: 0 15px;
+    padding: 15px; /* more spacious */
     height: auto;
     min-height: 80px;
     flex-wrap: wrap;
-    justify-content: center;
+    justify-content: space-around; /* spread items out */
+    gap: 15px;
+  }
+
+  #bottom-left-controls {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    padding: 15px 20px !important;
+    border-top: none !important;
+    background: transparent !important;
+    justify-content: space-between !important;
+    z-index: 100;
+    pointer-events: none; /* Let clicks pass through empty space */
+  }
+
+  #bottom-left-controls > * {
+    pointer-events: auto; /* Re-enable clicks for toggles */
   }
 
   /* Adjust map height on mobile */
   #main-view {
     flex: none;
-    height: 50vh;
+    height: 45vh; /* slightly less to give shop more room */
   }
 }
+
