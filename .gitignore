@@ -9,3 +9,12 @@ build/
 .venv/
 __pycache__/
 *.pyc
+
+# Docs
+docs/
+
+# Scratch files and scripts
+check.js
+syntax_test.js
+test.js
+fix_racelines.py
