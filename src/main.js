@@ -2,6 +2,7 @@ import { loadGame, saveGame } from './state/saveLoad.js';
 import { initDebugPanel } from './debug/debugPanel.js';
 import { initRender } from './ui/render.js';
 import { startGameLoop } from './systems/gameLoop.js';
+import { initEconomySystem } from './systems/economySystem.js';
 
 let gameState;
 
@@ -19,6 +20,9 @@ function init() {
 
     // Initialize debug panel
     initDebugPanel(gameState);
+    
+    // Initialize systems
+    initEconomySystem(gameState);
     
     // Initialize rendering
     initRender(gameState);

@@ -1,0 +1,76 @@
+.shop-panel {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.shop-panel h2 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    color: var(--text-data);
+    font-size: 18px;
+    letter-spacing: 2px;
+}
+
+.upgrade-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.upgrade-item {
+    background-color: #242933;
+    border-radius: 8px;
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.upgrade-info {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    flex: 1;
+}
+
+.upgrade-name {
+    font-weight: 700;
+    color: #E7E9EE;
+}
+
+.upgrade-name span {
+    color: var(--accent-primary);
+}
+
+.upgrade-desc {
+    font-size: 12px;
+    color: #8A8F9A;
+}
+
+.buy-btn {
+    background-color: #38404E;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-left: 15px;
+    font-family: ui-monospace, "SF Mono", Consolas, "Courier New", monospace;
+    transition: background-color 0.2s, transform 0.1s;
+}
+
+.buy-btn:hover:not(.disabled) {
+    background-color: #4A5468;
+}
+
+.buy-btn:active:not(.disabled) {
+    transform: scale(0.95);
+}
+
+.buy-btn.disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
