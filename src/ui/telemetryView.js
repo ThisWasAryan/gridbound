@@ -58,6 +58,15 @@ export function initTelemetryView(container, state) {
   EventBus.on("lap:progress", handleLapProgress);
   EventBus.on("lap:completed", handleLapCompleted);
   EventBus.on("credits:changed", handleCreditsChanged);
+  EventBus.on("track:switched", resetReadout);
+  EventBus.on("car:switched", resetReadout);
+}
+
+function resetReadout() {
+  if (!isLapping) {
+    lapTimeDisplay.textContent = "--:--.---";
+    lapTimeDisplay.style.color = "";
+  }
 }
 
 function handleLapStarted({ expectedDurationMs }) {

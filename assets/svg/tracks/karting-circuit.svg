@@ -44,7 +44,7 @@
   Sector 3: Turn 3 → front straight → Turn 4 → Finish
 -->
   <!-- Background -->
-  <rect width="1000" height="600" fill="#1A1F24" />
+  <rect width="1000" height="600" fill="none" />
   
   <!-- The main raceline that the car follows -->
   <path id="raceline" 

@@ -17,7 +17,8 @@
   font-size: 28px;
   font-weight: 900;
   letter-spacing: 6px;
-  color: rgba(255, 255, 255, 0.25);
+  color: var(--text-primary);
+  opacity: 0.25;
   z-index: 10;
   pointer-events: none;
   font-family: 'Inter', -apple-system, sans-serif;
@@ -84,7 +85,6 @@
   border-left: 2px solid var(--border-color);
   display: flex;
   flex-direction: column;
-  overflow-y: auto;
 }
 
 @media (max-width: 768px) {
