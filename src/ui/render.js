@@ -50,7 +50,7 @@ export function initRender(gameState) {
 
   // Settings Modal HTML
   gameContainer.innerHTML += `
-    <div id="settings-modal" class="hidden" style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);z-index:9999;display:flex;align-items:center;justify-content:center;">
+    <div id="settings-modal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);z-index:9999;align-items:center;justify-content:center;">
         <div style="background:var(--bg-panel);padding:30px;border-radius:12px;width:400px;max-width:90%;border:1px solid var(--border-color);display:flex;flex-direction:column;gap:20px;">
             <div style="display:flex;justify-content:space-between;align-items:center;">
                 <h2 style="margin:0;color:var(--text-primary);">Settings / Cheats</h2>
@@ -73,7 +73,7 @@ export function initRender(gameState) {
         </div>
     </div>
     
-    <div id="delete-confirm-modal" class="hidden" style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);z-index:10000;display:flex;align-items:center;justify-content:center;">
+    <div id="delete-confirm-modal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);z-index:10000;align-items:center;justify-content:center;">
         <div style="background:var(--bg-panel);padding:30px;border-radius:12px;width:400px;max-width:90%;border:1px solid #e63946;display:flex;flex-direction:column;gap:20px;">
             <h2 style="margin:0;color:#e63946;">Delete Progress</h2>
             <p style="color:var(--text-secondary);font-size:14px;margin:0;">To confirm deletion, type <strong>DELETE</strong> below.</p>
@@ -107,11 +107,11 @@ export function initRender(gameState) {
   });
 
   settingsToggle.addEventListener("click", () => {
-    settingsModal.classList.remove("hidden");
+    settingsModal.style.display = "flex";
   });
 
   closeSettingsBtn.addEventListener("click", () => {
-    settingsModal.classList.add("hidden");
+    settingsModal.style.display = "none";
   });
 
   document.getElementById("btn-add-million").addEventListener("click", () => {
@@ -120,7 +120,7 @@ export function initRender(gameState) {
   });
 
   document.getElementById("btn-trigger-pitstop").addEventListener("click", () => {
-    settingsModal.classList.add("hidden");
+    settingsModal.style.display = "none";
     EventBus.emit("pitstop:active", {});
   });
 
@@ -129,8 +129,8 @@ export function initRender(gameState) {
   const confirmDelBtn = document.getElementById("btn-confirm-delete");
 
   document.getElementById("btn-delete-progress").addEventListener("click", () => {
-    settingsModal.classList.add("hidden");
-    deleteModal.classList.remove("hidden");
+    settingsModal.style.display = "none";
+    deleteModal.style.display = "flex";
     delInput.value = "";
     confirmDelBtn.style.opacity = "0.5";
     confirmDelBtn.style.pointerEvents = "none";
@@ -138,8 +138,8 @@ export function initRender(gameState) {
   });
 
   document.getElementById("btn-cancel-delete").addEventListener("click", () => {
-    deleteModal.classList.add("hidden");
-    settingsModal.classList.remove("hidden");
+    deleteModal.style.display = "none";
+    settingsModal.style.display = "flex";
   });
 
   delInput.addEventListener("input", (e) => {
