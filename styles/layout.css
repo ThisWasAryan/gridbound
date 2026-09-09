@@ -1,0 +1,35 @@
+#game-container {
+    width: 1000px;
+    height: 800px;
+    background-color: var(--bg-panel);
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+#track-section {
+    flex: 1;
+    position: relative;
+    background-color: #1A1F24;
+}
+
+.track-container {
+    width: 100%;
+    height: 100%;
+}
+
+.track-container svg {
+    width: 100%;
+    height: 100%;
+}
+
+#telemetry-section {
+    height: 120px;
+    background-color: var(--bg-panel);
+    border-top: 2px solid #2A2F3A;
+    display: flex;
+    align-items: center;
+    padding: 0 40px;
+}

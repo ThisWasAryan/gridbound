@@ -1,0 +1,16 @@
+<svg viewBox="0 0 1000 600" width="100% " height="100%" xmlns="http://www.w3.org/2000/svg">
+  <!-- Decorative background/grass -->
+  <rect width="1000" height="600" fill="#1A1F24" />
+  
+  <!-- The main raceline that the car follows -->
+  <path id="raceline" 
+        d="M 500,500 L 800,500 A 50 50 0 0 0 850,450 L 850,150 A 50 50 0 0 0 800,100 L 200,100 A 50 50 0 0 0 150,150 L 150,450 A 50 50 0 0 0 200,500 Z" 
+        fill="none" 
+        stroke="#333945" 
+        stroke-width="30" 
+        stroke-linejoin="round" 
+        stroke-linecap="round" />
+        
+  <!-- Start/Finish line -->
+  <line x1="500" y1="480" x2="500" y2="520" stroke="#E7E9EE" stroke-width="5" stroke-dasharray="5,5" />
+</svg>

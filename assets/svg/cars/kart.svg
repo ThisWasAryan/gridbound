@@ -1,0 +1,14 @@
+<svg viewBox="-30 -15 60 30" width="60" height="30" xmlns="http://www.w3.org/2000/svg">
+  <!-- Kart Body -->
+  <rect x="-20" y="-8" width="40" height="16" rx="4" fill="#E63946" />
+  <!-- Driver -->
+  <circle cx="-5" cy="0" r="5" fill="#1D2129" stroke="#E7E9EE" stroke-width="1.5" />
+  <!-- Front Wheels -->
+  <rect x="10" y="-12" width="8" height="4" rx="1" fill="#14161B" />
+  <rect x="10" y="8" width="8" height="4" rx="1" fill="#14161B" />
+  <!-- Rear Wheels -->
+  <rect x="-18" y="-14" width="10" height="6" rx="1" fill="#14161B" />
+  <rect x="-18" y="8" width="10" height="6" rx="1" fill="#14161B" />
+  <!-- Steering wheel -->
+  <line x1="2" y1="-3" x2="2" y2="3" stroke="#1D2129" stroke-width="2" />
+</svg>

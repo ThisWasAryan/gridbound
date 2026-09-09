@@ -1,0 +1,56 @@
+.telemetry-panel {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.telemetry-data {
+    display: flex;
+    gap: 40px;
+}
+
+.data-block {
+    display: flex;
+    flex-direction: column;
+}
+
+.data-block .label {
+    font-size: 12px;
+    color: #8A8F9A;
+    letter-spacing: 1px;
+    font-weight: 600;
+}
+
+.data-block .value {
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--text-data);
+}
+
+.primary-btn {
+    background-color: var(--accent-primary);
+    color: white;
+    border: none;
+    padding: 15px 40px;
+    font-size: 20px;
+    font-weight: 800;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform 0.1s, background-color 0.2s;
+}
+
+.primary-btn:hover {
+    background-color: #F84A58;
+}
+
+.primary-btn:active, .primary-btn.active {
+    transform: scale(0.95);
+    background-color: #CC2B37;
+}
+
+.primary-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
