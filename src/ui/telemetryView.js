@@ -23,7 +23,6 @@ export function initTelemetryView(container, state) {
                     <span class="label">CREDITS</span>
                     <div style="display: flex; align-items: center; gap: 8px;">
                         <span class="value monospace" id="credits-readout">${formatCredits(state.economy.credits)}</span>
-                        <button id="cheat-btn" style="background: var(--bg-surface); border: 1px solid var(--accent-sector); color: var(--accent-sector); padding: 2px 6px; border-radius: 4px; font-size: 10px; cursor: pointer;">+$1M</button>
                     </div>
                 </div>
                 <div class="data-block">
@@ -42,16 +41,6 @@ export function initTelemetryView(container, state) {
   startButton.addEventListener("click", () => {
     AudioCues.buttonClick();
     startManualLap();
-  });
-
-  document.getElementById("cheat-btn").addEventListener("click", () => {
-    if (window.Game && window.Game.debug) {
-      window.Game.debug.addCredits(1000000);
-    } else {
-      // Fallback if debug panel isn't ready
-      state.economy.credits += 1000000;
-      EventBus.emit("credits:changed", { total: state.economy.credits });
-    }
   });
 
   EventBus.on("lap:started", handleLapStarted);

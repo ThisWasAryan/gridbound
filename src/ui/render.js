@@ -36,7 +36,7 @@ export function initRender(gameState) {
   initTrackView(document.getElementById("track-section"), state);
   initTelemetryView(document.getElementById("telemetry-section"), state);
   initShopView(document.getElementById("shop-section"), state);
-  initPitStopView(document.getElementById("game-container"));
+  initPitStopView(document.getElementById("game-container"), state);
 
   initOnboardingView(state);
   initAchievementView();
@@ -48,9 +48,49 @@ export function initRender(gameState) {
     EventBus.emit("credits:changed", { total: state.economy.credits });
   });
 
+  // Settings Modal HTML
+  gameContainer.innerHTML += `
+    <div id="settings-modal" class="hidden" style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);z-index:9999;display:flex;align-items:center;justify-content:center;">
+        <div style="background:var(--bg-panel);padding:30px;border-radius:12px;width:400px;max-width:90%;border:1px solid var(--border-color);display:flex;flex-direction:column;gap:20px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+                <h2 style="margin:0;color:var(--text-primary);">Settings / Cheats</h2>
+                <button id="close-settings" style="background:transparent;border:none;color:var(--text-muted);cursor:pointer;font-size:24px;line-height:1;">&times;</button>
+            </div>
+            
+            <div style="padding-bottom:15px;border-bottom:1px solid var(--border-color);">
+                <button id="btn-add-million" class="primary-btn" style="width:100%;margin-bottom:10px;">+ $1,000,000</button>
+                <p style="font-size:12px;color:var(--text-muted);margin:0;">This option is to test all features of the game. If you are in a hurry, we do not recommend this option and it ends all the fun.</p>
+            </div>
+            
+            <div style="padding-bottom:15px;border-bottom:1px solid var(--border-color);">
+                <button id="btn-trigger-pitstop" class="primary-btn" style="width:100%;margin-bottom:10px;background:var(--accent-sector);color:#000;">Trigger Pit Stop</button>
+                <p style="font-size:12px;color:var(--text-muted);margin:0;">This is for testing pit stop while development and it's been left in if you want to try the pit stop minigame at any time.</p>
+            </div>
+
+            <div>
+                <button id="btn-delete-progress" class="secondary-btn" style="width:100%;border-color:#e63946;color:#e63946;">Delete Your Progress</button>
+            </div>
+        </div>
+    </div>
+    
+    <div id="delete-confirm-modal" class="hidden" style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);z-index:10000;display:flex;align-items:center;justify-content:center;">
+        <div style="background:var(--bg-panel);padding:30px;border-radius:12px;width:400px;max-width:90%;border:1px solid #e63946;display:flex;flex-direction:column;gap:20px;">
+            <h2 style="margin:0;color:#e63946;">Delete Progress</h2>
+            <p style="color:var(--text-secondary);font-size:14px;margin:0;">To confirm deletion, type <strong>DELETE</strong> below.</p>
+            <input type="text" id="delete-confirm-input" style="background:var(--bg-surface);border:1px solid var(--border-color);color:var(--text-primary);padding:10px;border-radius:6px;font-family:monospace;outline:none;" placeholder="Type DELETE">
+            <div style="display:flex;gap:10px;">
+                <button id="btn-cancel-delete" class="secondary-btn" style="flex:1;">Cancel</button>
+                <button id="btn-confirm-delete" class="primary-btn" style="flex:1;background:#e63946;opacity:0.5;pointer-events:none;">Confirm</button>
+            </div>
+        </div>
+    </div>
+  `;
+
   // Settings & Theme Logic
   const themeToggle = document.getElementById("theme-toggle");
   const settingsToggle = document.getElementById("settings-toggle");
+  const settingsModal = document.getElementById("settings-modal");
+  const closeSettingsBtn = document.getElementById("close-settings");
   
   if (state.settings.theme === 'light') {
     document.body.classList.add('light-mode');
@@ -67,9 +107,59 @@ export function initRender(gameState) {
   });
 
   settingsToggle.addEventListener("click", () => {
-    if (confirm("WARNING: Are you sure you want to completely RESET YOUR PROGRESS? This cannot be undone.")) {
-      localStorage.removeItem("formula_incremental_save"); // old save key
-      location.reload();
+    settingsModal.classList.remove("hidden");
+  });
+
+  closeSettingsBtn.addEventListener("click", () => {
+    settingsModal.classList.add("hidden");
+  });
+
+  document.getElementById("btn-add-million").addEventListener("click", () => {
+    state.economy.credits += 1000000;
+    EventBus.emit("credits:changed", { total: state.economy.credits });
+  });
+
+  document.getElementById("btn-trigger-pitstop").addEventListener("click", () => {
+    settingsModal.classList.add("hidden");
+    EventBus.emit("pitstop:active", {});
+  });
+
+  const deleteModal = document.getElementById("delete-confirm-modal");
+  const delInput = document.getElementById("delete-confirm-input");
+  const confirmDelBtn = document.getElementById("btn-confirm-delete");
+
+  document.getElementById("btn-delete-progress").addEventListener("click", () => {
+    settingsModal.classList.add("hidden");
+    deleteModal.classList.remove("hidden");
+    delInput.value = "";
+    confirmDelBtn.style.opacity = "0.5";
+    confirmDelBtn.style.pointerEvents = "none";
+    delInput.focus();
+  });
+
+  document.getElementById("btn-cancel-delete").addEventListener("click", () => {
+    deleteModal.classList.add("hidden");
+    settingsModal.classList.remove("hidden");
+  });
+
+  delInput.addEventListener("input", (e) => {
+    if (e.target.value === "DELETE") {
+      confirmDelBtn.style.opacity = "1";
+      confirmDelBtn.style.pointerEvents = "auto";
+    } else {
+      confirmDelBtn.style.opacity = "0.5";
+      confirmDelBtn.style.pointerEvents = "none";
     }
+  });
+
+  delInput.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" && delInput.value === "DELETE") {
+      confirmDelBtn.click();
+    }
+  });
+
+  confirmDelBtn.addEventListener("click", () => {
+    localStorage.removeItem("formula_incremental_save");
+    location.reload();
   });
 }

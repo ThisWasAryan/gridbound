@@ -12,8 +12,10 @@ let animationId;
 let cursorPosition = 0;
 let cursorDirection = 1;
 let speed = 2; // speed of the cursor
+let stateRef;
 
-export function initPitStopView(container) {
+export function initPitStopView(container, state) {
+  stateRef = state;
   // Create UI elements
   pitStopOverlay = document.createElement("div");
   pitStopOverlay.className = "pitstop-overlay hidden";
