@@ -15,8 +15,8 @@ export const UPGRADES_CONFIG = {
         type: 'per-car',
         description: 'Improves cornering speed.'
     },
-    tyres: {
-        id: 'tyres',
+    tyre: {
+        id: 'tyre',
         name: 'Tyres',
         baseCost: 150,
         growthRate: 1.12,

@@ -2,10 +2,55 @@ export const TRACKS_CONFIG = {
     karting: {
         id: 'karting',
         name: 'Karting Circuit',
-        straightWeight: 5000, // Arbitrary base units for time
+        straightWeight: 5000,
         cornerWeight: 5000,
         profitMultiplier: 1.0,
         cost: 0,
         svgPath: 'assets/svg/tracks/karting-circuit.svg'
+    },
+    buddh: {
+        id: 'buddh',
+        name: 'Buddh International Circuit',
+        straightWeight: 12000,
+        cornerWeight: 14000,
+        profitMultiplier: 3.5,
+        cost: 5000,
+        svgPath: 'assets/svg/tracks/buddh.svg'
+    },
+    monza: {
+        id: 'monza',
+        name: 'Monza',
+        straightWeight: 20000,
+        cornerWeight: 8000,
+        profitMultiplier: 8.0,
+        cost: 15000,
+        svgPath: 'assets/svg/tracks/monza.svg'
+    },
+    silverstone: {
+        id: 'silverstone',
+        name: 'Silverstone',
+        straightWeight: 15000,
+        cornerWeight: 22000,
+        profitMultiplier: 20.0,
+        cost: 50000,
+        svgPath: 'assets/svg/tracks/silverstone.svg'
+    },
+    spa: {
+        id: 'spa',
+        name: 'Spa-Francorchamps',
+        straightWeight: 18000,
+        cornerWeight: 25000,
+        profitMultiplier: 55.0,
+        cost: 150000,
+        svgPath: 'assets/svg/tracks/spa.svg'
+    },
+    monaco: {
+        id: 'monaco',
+        name: 'Monaco',
+        straightWeight: 6000,
+        cornerWeight: 35000,
+        profitMultiplier: 150.0,
+        cost: 500000,
+        svgPath: 'assets/svg/tracks/monaco.svg'
     }
 };

@@ -1,5 +1,6 @@
 import { UPGRADES_CONFIG, calculateUpgradeCost } from '../config/upgrades.config.js';
-import { buyUpgrade } from '../systems/economySystem.js';
+import { TRACKS_CONFIG } from '../config/tracks.config.js';
+import { buyUpgrade, buyTrack, switchTrack } from '../systems/economySystem.js';
 import { EventBus } from '../utils/eventBus.js';
 import { formatCredits } from '../utils/formatNumber.js';
 import { AudioCues } from '../audio/audioManager.js';
@@ -7,21 +8,54 @@ import { createParticleBurst } from '../fx/particleSystem.js';
 
 let shopContainer;
 let stateRef;
+let currentTab = 'upgrades'; // 'upgrades' | 'tracks'
 
 export function initShopView(container, state) {
     shopContainer = container;
     stateRef = state;
     
-    renderShop();
+    renderBase();
+    renderContent();
     
-    // Re-render shop when credits change (to update button states) 
-    // or when an upgrade is purchased (to update level and cost)
     EventBus.on('credits:changed', updateButtonStates);
     EventBus.on('upgrade:purchased', handleUpgradePurchased);
+    EventBus.on('track:purchased', handleTrackPurchased);
+    EventBus.on('track:switched', renderContent);
 }
 
-function renderShop() {
-    let html = `<div class="shop-panel"><h2>UPGRADES</h2><div class="upgrade-list">`;
+function renderBase() {
+    shopContainer.innerHTML = `
+        <div class="shop-panel">
+            <div class="shop-tabs">
+                <button id="tab-upgrades" class="tab-btn active">UPGRADES</button>
+                <button id="tab-tracks" class="tab-btn">TRACKS</button>
+            </div>
+            <div id="shop-content-area"></div>
+        </div>
+    `;
+    
+    document.getElementById('tab-upgrades').addEventListener('click', () => switchTab('upgrades'));
+    document.getElementById('tab-tracks').addEventListener('click', () => switchTab('tracks'));
+}
+
+function switchTab(tab) {
+    currentTab = tab;
+    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+    document.getElementById(`tab-${tab}`).classList.add('active');
+    renderContent();
+}
+
+function renderContent() {
+    const area = document.getElementById('shop-content-area');
+    if (currentTab === 'upgrades') {
+        renderUpgrades(area);
+    } else if (currentTab === 'tracks') {
+        renderTracks(area);
+    }
+}
+
+function renderUpgrades(container) {
+    let html = `<div class="upgrade-list">`;
     
     Object.values(UPGRADES_CONFIG).forEach(config => {
         const currentLevel = getCurrentLevel(config);
@@ -41,8 +75,8 @@ function renderShop() {
         `;
     });
     
-    html += `</div></div>`;
-    shopContainer.innerHTML = html;
+    html += `</div>`;
+    container.innerHTML = html;
     
     // Attach listeners
     Object.keys(UPGRADES_CONFIG).forEach(id => {
@@ -52,10 +86,65 @@ function renderShop() {
                 AudioCues.purchase();
                 const rect = btn.getBoundingClientRect();
                 createParticleBurst(rect.left + rect.width / 2, rect.top + rect.height / 2, 20, ['#FFB020', '#F5F7FA']);
-            } else {
-                AudioCues.pitBad(); // "denied" sound
             }
         });
+    });
+}
+
+function renderTracks(container) {
+    let html = `<div class="upgrade-list">`;
+    
+    Object.values(TRACKS_CONFIG).forEach(config => {
+        const isOwned = stateRef.tracks[config.id] && stateRef.tracks[config.id].owned;
+        const isActive = stateRef.session.currentTrackId === config.id;
+        const affordable = stateRef.economy.credits >= config.cost;
+        
+        let btnHtml = '';
+        if (isActive) {
+            btnHtml = `<button class="buy-btn disabled">ACTIVE</button>`;
+        } else if (isOwned) {
+            btnHtml = `<button class="buy-btn switch-btn" id="switch-track-btn-${config.id}">DRIVE</button>`;
+        } else {
+            btnHtml = `<button class="buy-btn ${affordable ? '' : 'disabled'}" id="buy-track-btn-${config.id}">
+                ${formatCredits(config.cost)}
+            </button>`;
+        }
+
+        html += `
+            <div class="upgrade-item">
+                <div class="upgrade-info">
+                    <span class="upgrade-name">${config.name}</span>
+                    <span class="upgrade-desc">Profit Multiplier: ${config.profitMultiplier}x</span>
+                </div>
+                ${btnHtml}
+            </div>
+        `;
+    });
+    
+    html += `</div>`;
+    container.innerHTML = html;
+    
+    Object.values(TRACKS_CONFIG).forEach(config => {
+        const isOwned = stateRef.tracks[config.id] && stateRef.tracks[config.id].owned;
+        const isActive = stateRef.session.currentTrackId === config.id;
+        
+        if (!isActive && isOwned) {
+            document.getElementById(`switch-track-btn-${config.id}`).addEventListener('click', () => {
+                if (!stateRef.runtime.lapActive) {
+                    AudioCues.buttonClick();
+                    switchTrack(config.id);
+                }
+            });
+        } else if (!isActive && !isOwned) {
+            const btn = document.getElementById(`buy-track-btn-${config.id}`);
+            btn.addEventListener('click', () => {
+                if (buyTrack(config.id)) {
+                    AudioCues.purchase();
+                    const rect = btn.getBoundingClientRect();
+                    createParticleBurst(rect.left + rect.width / 2, rect.top + rect.height / 2, 30, ['#38bdf8', '#F5F7FA']);
+                }
+            });
+        }
     });
 }
 
@@ -68,32 +157,57 @@ function getCurrentLevel(config) {
 }
 
 function updateButtonStates() {
-    Object.values(UPGRADES_CONFIG).forEach(config => {
-        const currentLevel = getCurrentLevel(config);
-        const cost = calculateUpgradeCost(config.baseCost, config.growthRate, currentLevel);
-        const btn = document.getElementById(`buy-btn-${config.id}`);
-        if (btn) {
-            const affordable = stateRef.economy.credits >= cost;
-            if (affordable) {
-                btn.classList.remove('disabled');
-            } else {
-                btn.classList.add('disabled');
+    if (currentTab === 'upgrades') {
+        Object.values(UPGRADES_CONFIG).forEach(config => {
+            const currentLevel = getCurrentLevel(config);
+            const cost = calculateUpgradeCost(config.baseCost, config.growthRate, currentLevel);
+            const btn = document.getElementById(`buy-btn-${config.id}`);
+            if (btn) {
+                const affordable = stateRef.economy.credits >= cost;
+                if (affordable) {
+                    btn.classList.remove('disabled');
+                } else {
+                    btn.classList.add('disabled');
+                }
             }
-        }
-    });
+        });
+    } else if (currentTab === 'tracks') {
+        Object.values(TRACKS_CONFIG).forEach(config => {
+            const isOwned = stateRef.tracks[config.id] && stateRef.tracks[config.id].owned;
+            if (!isOwned) {
+                const btn = document.getElementById(`buy-track-btn-${config.id}`);
+                if (btn) {
+                    const affordable = stateRef.economy.credits >= config.cost;
+                    if (affordable) {
+                        btn.classList.remove('disabled');
+                    } else {
+                        btn.classList.add('disabled');
+                    }
+                }
+            }
+        });
+    }
 }
 
 function handleUpgradePurchased({ id, newLevel }) {
-    const config = UPGRADES_CONFIG[id];
-    const lvlSpan = document.getElementById(`lvl-${id}`);
-    const btn = document.getElementById(`buy-btn-${id}`);
-    
-    if (lvlSpan) lvlSpan.textContent = newLevel;
-    
-    if (btn) {
-        const cost = calculateUpgradeCost(config.baseCost, config.growthRate, newLevel);
-        btn.textContent = formatCredits(cost);
+    if (currentTab === 'upgrades') {
+        const config = UPGRADES_CONFIG[id];
+        const lvlSpan = document.getElementById(`lvl-${id}`);
+        const btn = document.getElementById(`buy-btn-${id}`);
+        
+        if (lvlSpan) lvlSpan.textContent = newLevel;
+        
+        if (btn) {
+            const cost = calculateUpgradeCost(config.baseCost, config.growthRate, newLevel);
+            btn.textContent = formatCredits(cost);
+        }
+        
+        updateButtonStates();
     }
-    
-    updateButtonStates();
+}
+
+function handleTrackPurchased() {
+    if (currentTab === 'tracks') {
+        renderContent();
+    }
 }

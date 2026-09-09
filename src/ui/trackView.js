@@ -7,6 +7,8 @@ let trackElement;
 let racelinePath;
 let carGroup;
 
+let stateRef;
+
 /**
  * Initializes the track view and injects the SVGs.
  * @param {HTMLElement} container 
@@ -14,6 +16,7 @@ let carGroup;
  */
 export async function initTrackView(container, state) {
     containerElement = container;
+    stateRef = state;
     
     // Clear container
     containerElement.innerHTML = '';
@@ -28,6 +31,11 @@ export async function initTrackView(container, state) {
     // Listen to lap progress
     EventBus.on('lap:progress', handleLapProgress);
     EventBus.on('lap:completed', handleLapCompleted);
+    EventBus.on('track:switched', handleTrackSwitched);
+}
+
+function handleTrackSwitched() {
+    loadTrackAndCar(stateRef.session.currentTrackId, stateRef.session.currentCarId);
 }
 
 /**

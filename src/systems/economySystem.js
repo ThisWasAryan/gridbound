@@ -1,4 +1,5 @@
 import { UPGRADES_CONFIG, calculateUpgradeCost } from '../config/upgrades.config.js';
+import { TRACKS_CONFIG } from '../config/tracks.config.js';
 import { saveGame } from '../state/saveLoad.js';
 import { EventBus } from '../utils/eventBus.js';
 
@@ -48,4 +49,48 @@ export function buyUpgrade(upgradeId) {
     EventBus.emit('upgrade:purchased', { id: upgradeId, newLevel: currentLevel + 1 });
     
     return true;
+}
+
+/**
+ * Attempts to purchase a track.
+ * @param {string} trackId 
+ * @returns {boolean}
+ */
+export function buyTrack(trackId) {
+    const config = TRACKS_CONFIG[trackId];
+    if (!config) return false;
+    
+    if (state.tracks[trackId] && state.tracks[trackId].owned) {
+        return false; // Already owned
+    }
+    
+    if (state.economy.credits < config.cost) return false;
+    
+    state.economy.credits -= config.cost;
+    
+    if (!state.tracks[trackId]) {
+        state.tracks[trackId] = {};
+    }
+    state.tracks[trackId].owned = true;
+    
+    saveGame(state);
+    
+    EventBus.emit('credits:changed', { total: state.economy.credits });
+    EventBus.emit('track:purchased', { id: trackId });
+    
+    return true;
+}
+
+/**
+ * Switches the current active track.
+ * @param {string} trackId 
+ */
+export function switchTrack(trackId) {
+    if (!state.tracks[trackId] || !state.tracks[trackId].owned) return;
+    if (state.runtime && state.runtime.lapActive) return; // Cannot switch while racing
+    
+    state.session.currentTrackId = trackId;
+    saveGame(state);
+    
+    EventBus.emit('track:switched', { id: trackId });
 }

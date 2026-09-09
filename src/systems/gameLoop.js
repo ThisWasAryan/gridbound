@@ -3,6 +3,7 @@ import { TRACKS_CONFIG } from '../config/tracks.config.js';
 import { EventBus } from '../utils/eventBus.js';
 import { saveGame } from '../state/saveLoad.js';
 import { calculateLapDurationMs } from './lapSystem.js';
+import { triggerPitStop } from './pitStopSystem.js';
 
 let lastTimestamp = 0;
 let accumulatedMs = 0;
@@ -66,15 +67,22 @@ function rafLoop(timestampMs) {
     lastTimestamp = timestampMs;
     
     // 1. Continuous Animation Update (Lap Progress)
-    if (state.runtime.lapActive) {
+    if (state.runtime.lapActive && !state.runtime.pitStopActive) {
         const elapsed = timestampMs - state.runtime.lapStartTime;
         state.runtime.lapProgress = Math.min(1, elapsed / state.runtime.expectedLapDurationMs);
         
         EventBus.emit('lap:progress', { progress: state.runtime.lapProgress });
         
-        if (state.runtime.lapProgress >= 1) {
+        if (state.runtime.pitStopScheduled && !state.runtime.pitStopTriggered && state.runtime.lapProgress >= 0.9) {
+            triggerPitStop();
+            // Reset lapStartTime so it pauses visually
+            state.runtime.lapStartTime = timestampMs - (state.runtime.expectedLapDurationMs * 0.9);
+        } else if (state.runtime.lapProgress >= 1) {
             completeLap();
         }
+    } else if (state.runtime.pitStopActive) {
+        // Shift start time forward to pause progress
+        state.runtime.lapStartTime += dt;
     }
     
     // 2. Coarse Simulation Tick
@@ -108,7 +116,9 @@ export function startGameLoop(gameState) {
         lapStartTime: 0,
         expectedLapDurationMs: 0,
         lapProgress: 0,
-        pitStopActive: false
+        pitStopActive: false,
+        pitStopScheduled: false,
+        pitStopTriggered: false
     };
     
     lastTimestamp = performance.now();

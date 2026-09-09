@@ -3,6 +3,8 @@ import { initDebugPanel } from './debug/debugPanel.js';
 import { initRender } from './ui/render.js';
 import { startGameLoop } from './systems/gameLoop.js';
 import { initEconomySystem } from './systems/economySystem.js';
+import { initPitStopSystem } from './systems/pitStopSystem.js';
+import { initPitStopView } from './ui/pitStopView.js';
 
 let gameState;
 
@@ -23,9 +25,13 @@ function init() {
     
     // Initialize systems
     initEconomySystem(gameState);
+    initPitStopSystem(gameState);
     
     // Initialize rendering
     initRender(gameState);
+    
+    // Initialize overlay UI
+    initPitStopView(document.body);
     
     // Start game loop
     startGameLoop(gameState);

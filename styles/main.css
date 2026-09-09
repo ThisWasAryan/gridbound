@@ -3,6 +3,7 @@
 @import url('./animations.css');
 @import url('./components/telemetry.css');
 @import url('./components/shop.css');
+@import url('./components/pitstop.css');
 
 body {
     background-color: var(--bg-void);
