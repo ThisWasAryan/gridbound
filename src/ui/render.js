@@ -67,8 +67,13 @@ export function initRender(gameState) {
                 <p style="font-size:12px;color:var(--text-muted);margin:0;">This is for testing pit stop while development and it's been left in if you want to try the pit stop minigame at any time.</p>
             </div>
 
-            <div>
+            <div style="padding-bottom:15px;border-bottom:1px solid var(--border-color);">
                 <button id="btn-delete-progress" class="secondary-btn" style="width:100%;border-color:#e63946;color:#e63946;">Delete Your Progress</button>
+            </div>
+
+            <div style="text-align: center; font-size: 14px; color: var(--text-muted); margin-top: 5px;">
+                Made with 🩶 by Aryan Raj<br>
+                <a href="https://thiswasaryan.in" target="_blank" style="color: var(--accent-sector); text-decoration: none;">thiswasaryan.in</a>
             </div>
         </div>
     </div>
