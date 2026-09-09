@@ -49,7 +49,7 @@ export function initRender(gameState) {
   });
 
   // Settings Modal HTML
-  gameContainer.innerHTML += `
+  gameContainer.insertAdjacentHTML('beforeend', `
     <div id="settings-modal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);z-index:9999;align-items:center;justify-content:center;">
         <div style="background:var(--bg-panel);padding:30px;border-radius:12px;width:400px;max-width:90%;border:1px solid var(--border-color);display:flex;flex-direction:column;gap:20px;">
             <div style="display:flex;justify-content:space-between;align-items:center;">
