@@ -5,16 +5,19 @@ export function createNumberPopup(text, x, y, color = "#F5F7FA") {
   popup.style.left = `${x}px`;
   popup.style.top = `${y}px`;
   popup.style.color = color;
+  popup.style.position = "fixed"; /* fixed so it works regardless of scroll */
 
   document.body.appendChild(popup);
 
-  // Trigger animation
+  // Trigger animation on next frame
   requestAnimationFrame(() => {
     popup.classList.add("animate");
   });
 
   // Remove element after animation
+  popup.addEventListener("animationend", () => popup.remove());
+  // Fallback removal in case animationend doesn't fire
   setTimeout(() => {
-    popup.remove();
-  }, 2500);
+    if (popup.parentNode) popup.remove();
+  }, 1500);
 }

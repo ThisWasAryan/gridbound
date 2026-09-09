@@ -4,12 +4,15 @@
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-color: rgba(0, 0, 0, 0.8);
+  background-color: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 2000;
-  transition: opacity 0.3s;
+  opacity: 1;
+  transition: opacity 0.3s ease;
 }
 
 .pitstop-overlay.hidden {
@@ -19,32 +22,41 @@
 
 .pitstop-modal {
   background-color: var(--bg-panel);
-  padding: 40px;
+  padding: 36px;
   border-radius: 12px;
-  border: 2px solid #2a2f3a;
+  border: 1px solid var(--border-color);
   text-align: center;
-  width: 500px;
+  width: 460px;
+  max-width: 90%;
+  transform: scale(1);
+  transition: transform 0.3s ease;
+}
+
+.pitstop-overlay.hidden .pitstop-modal {
+  transform: scale(0.95);
 }
 
 .pitstop-modal h2 {
   color: var(--text-data);
   margin-top: 0;
-  font-size: 32px;
+  font-size: 28px;
+  letter-spacing: 2px;
 }
 
 .pitstop-modal p {
-  color: #8a8f9a;
-  margin-bottom: 30px;
+  color: var(--text-secondary);
+  margin-bottom: 24px;
+  font-size: 14px;
 }
 
 .slider-container {
   width: 100%;
   height: 30px;
-  background-color: #14161b;
+  background-color: var(--bg-void);
   border-radius: 15px;
   position: relative;
   overflow: hidden;
-  margin-bottom: 30px;
+  margin-bottom: 24px;
 }
 
 .zone {
@@ -55,12 +67,12 @@
 .bad-zone-left {
   width: 30%;
   left: 0;
-  background-color: #e63946;
+  background-color: var(--accent-primary);
 }
 .good-zone-left {
   width: 15%;
   left: 30%;
-  background-color: #ffb020;
+  background-color: var(--accent-caution);
 }
 .perfect-zone {
   width: 10%;
@@ -70,12 +82,12 @@
 .good-zone-right {
   width: 15%;
   left: 55%;
-  background-color: #ffb020;
+  background-color: var(--accent-caution);
 }
 .bad-zone-right {
   width: 30%;
   left: 70%;
-  background-color: #e63946;
+  background-color: var(--accent-primary);
 }
 
 .slider-cursor {
@@ -87,5 +99,30 @@
   left: 0%;
   transform: translateX(-50%);
   box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+  border-radius: 3px;
   z-index: 10;
+}
+
+/* Pitstop action buttons — consistent with modal system */
+.pitstop-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 16px;
+}
+
+.pitstop-actions .secondary-btn {
+  background: transparent;
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  padding: 10px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.15s, color 0.15s;
+}
+
+.pitstop-actions .secondary-btn:hover {
+  background-color: var(--bg-surface);
+  color: var(--text-primary);
 }

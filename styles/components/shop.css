@@ -3,6 +3,7 @@
   display: flex;
   flex-direction: column;
   height: 100%;
+  min-height: 0; /* allow shrinking in flex context */
 }
 
 .shop-panel h2 {
@@ -11,6 +12,26 @@
   color: var(--text-data);
   font-size: 18px;
   letter-spacing: 2px;
+}
+
+/* Tabs stay fixed at top of shop panel */
+.shop-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  background-color: var(--bg-surface);
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 20px;
+  flex-shrink: 0; /* tabs never shrink */
+}
+
+/* Content area scrolls independently */
+#shop-content-area {
+  flex: 1;
+  min-height: 0; /* critical for overflow to work in flex child */
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch; /* smooth scrolling on iOS */
+  padding-bottom: 20px; /* breathing room at bottom of scroll */
 }
 
 .upgrade-list {
@@ -33,6 +54,7 @@
   flex-direction: column;
   gap: 5px;
   flex: 1;
+  min-width: 0; /* allow text truncation */
 }
 
 .upgrade-name {
@@ -62,6 +84,8 @@
   transition:
     background-color 0.2s,
     transform 0.1s;
+  flex-shrink: 0; /* prevent button from collapsing */
+  white-space: nowrap;
 }
 
 .buy-btn:hover:not(.disabled) {
@@ -75,15 +99,6 @@
 .buy-btn.disabled {
   opacity: 0.4;
   cursor: not-allowed;
-}
-
-.shop-tabs {
-  display: flex;
-  flex-wrap: wrap;
-  background-color: var(--bg-surface);
-  border-radius: 8px;
-  overflow: hidden;
-  margin-bottom: 20px;
 }
 
 .tab-btn {
@@ -116,4 +131,28 @@
   opacity: 0.3;
   cursor: not-allowed;
   text-decoration: line-through;
+}
+
+/* Mobile-specific shop adjustments */
+@media (max-width: 768px) {
+  .shop-panel {
+    padding: 12px;
+  }
+
+  .shop-tabs {
+    margin-bottom: 12px;
+  }
+
+  #shop-content-area {
+    padding-bottom: 30px; /* extra bottom padding so last item isn't cut off */
+  }
+
+  .upgrade-item {
+    padding: 12px;
+  }
+
+  .buy-btn {
+    padding: 8px 12px;
+    font-size: 13px;
+  }
 }

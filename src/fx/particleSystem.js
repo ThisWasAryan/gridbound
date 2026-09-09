@@ -1,74 +1,96 @@
+let canvas = null;
+let ctx = null;
+let allParticles = [];
+let isAnimating = false;
+
+function ensureCanvas() {
+  if (canvas) return;
+
+  canvas = document.createElement("canvas");
+  canvas.id = "fx-canvas";
+  canvas.style.cssText =
+    "position:fixed;top:0;left:0;width:100vw;height:100vh;pointer-events:none;z-index:9999;";
+  document.body.appendChild(canvas);
+
+  syncCanvasSize();
+  window.addEventListener("resize", syncCanvasSize);
+}
+
+function syncCanvasSize() {
+  if (!canvas) return;
+  const dpr = window.devicePixelRatio || 1;
+  canvas.width = window.innerWidth * dpr;
+  canvas.height = window.innerHeight * dpr;
+  ctx = canvas.getContext("2d");
+  ctx.scale(dpr, dpr);
+}
+
 export function createParticleBurst(
   x,
   y,
   count = 20,
   colors = ["#E63946", "#B26BFF", "#FFB020"],
 ) {
-  let canvas = document.getElementById("fx-canvas");
-  if (!canvas) {
-    canvas = document.createElement("canvas");
-    canvas.id = "fx-canvas";
-    canvas.style.position = "fixed";
-    canvas.style.top = "0";
-    canvas.style.left = "0";
-    canvas.style.width = "100vw";
-    canvas.style.height = "100vh";
-    canvas.style.pointerEvents = "none";
-    canvas.style.zIndex = "9999";
-    document.body.appendChild(canvas);
-
-    // Sync canvas resolution
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-  }
-
-  const ctx = canvas.getContext("2d");
-  const particles = [];
+  ensureCanvas();
 
   for (let i = 0; i < count; i++) {
-    particles.push({
-      x: x,
-      y: y,
-      vx: (Math.random() - 0.5) * 10,
-      vy: (Math.random() - 0.5) * 10 - 2,
+    const angle = (Math.PI * 2 * i) / count + (Math.random() - 0.5) * 0.5;
+    const speed = 2 + Math.random() * 6;
+    allParticles.push({
+      x,
+      y,
+      vx: Math.cos(angle) * speed,
+      vy: Math.sin(angle) * speed - 2,
       life: 1.0,
       color: colors[Math.floor(Math.random() * colors.length)],
       size: Math.random() * 4 + 2,
     });
   }
 
-  let rafId;
-  let lastTime = performance.now();
+  if (!isAnimating) {
+    isAnimating = true;
+    lastTime = performance.now();
+    requestAnimationFrame(update);
+  }
+}
 
-  function update(time) {
-    const dt = (time - lastTime) / 16.66;
-    lastTime = time;
+let lastTime = 0;
 
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    let active = false;
+function update(time) {
+  const dt = (time - lastTime) / 16.66;
+  lastTime = time;
 
-    for (const p of particles) {
-      if (p.life > 0) {
-        active = true;
-        p.x += p.vx * dt;
-        p.y += p.vy * dt;
-        p.vy += 0.2 * dt; // gravity
-        p.life -= 0.02 * dt;
+  // Clear the full canvas (use CSS pixel dimensions, not scaled)
+  ctx.save();
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.restore();
 
-        ctx.globalAlpha = Math.max(0, p.life);
-        ctx.fillStyle = p.color;
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-        ctx.fill();
-      }
+  // Update and draw all particles
+  for (let i = allParticles.length - 1; i >= 0; i--) {
+    const p = allParticles[i];
+    p.x += p.vx * dt;
+    p.y += p.vy * dt;
+    p.vy += 0.15 * dt; // gravity
+    p.life -= 0.018 * dt;
+
+    if (p.life <= 0) {
+      allParticles.splice(i, 1);
+      continue;
     }
 
-    if (active) {
-      rafId = requestAnimationFrame(update);
-    } else {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-    }
+    ctx.globalAlpha = Math.max(0, p.life);
+    ctx.fillStyle = p.color;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.size * p.life, 0, Math.PI * 2);
+    ctx.fill();
   }
 
-  rafId = requestAnimationFrame(update);
+  ctx.globalAlpha = 1;
+
+  if (allParticles.length > 0) {
+    requestAnimationFrame(update);
+  } else {
+    isAnimating = false;
+  }
 }

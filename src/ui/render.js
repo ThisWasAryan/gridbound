@@ -20,7 +20,7 @@ export function initRender(gameState) {
             <div id="telemetry-section"></div>
         </div>
         <div id="side-panel">
-            <div id="shop-section" style="flex: 1; overflow-y: auto;"></div>
+            <div id="shop-section" style="flex: 1; min-height: 0; display: flex; flex-direction: column;"></div>
             <div id="bottom-left-controls" style="padding: 20px; display: flex; gap: 15px; border-top: 2px solid var(--border-color); background: var(--bg-panel); align-items: center; justify-content: flex-start;">
                 <div id="theme-toggle" style="cursor: pointer; opacity: 0.7; transition: opacity 0.2s;">
                     <svg id="theme-icon-light" viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
@@ -50,42 +50,44 @@ export function initRender(gameState) {
 
   // Settings Modal HTML
   gameContainer.insertAdjacentHTML('beforeend', `
-    <div id="settings-modal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);z-index:9999;align-items:center;justify-content:center;">
-        <div style="background:var(--bg-panel);padding:30px;border-radius:12px;width:400px;max-width:90%;border:1px solid var(--border-color);display:flex;flex-direction:column;gap:20px;">
-            <div style="display:flex;justify-content:space-between;align-items:center;">
-                <h2 style="margin:0;color:var(--text-primary);">Settings / Cheats</h2>
-                <button id="close-settings" style="background:transparent;border:none;color:var(--text-muted);cursor:pointer;font-size:24px;line-height:1;">&times;</button>
+    <div id="settings-modal" class="modal-overlay">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h2>Settings / Cheats</h2>
+                <button id="close-settings" class="modal-close-btn">&times;</button>
             </div>
             
-            <div style="padding-bottom:15px;border-bottom:1px solid var(--border-color);">
-                <button id="btn-add-million" class="primary-btn" style="width:100%;margin-bottom:10px;">+ $1,000,000</button>
-                <p style="font-size:12px;color:var(--text-muted);margin:0;">This option is to test all features of the game. If you are in a hurry, we do not recommend this option and it ends all the fun.</p>
+            <div class="modal-section">
+                <button id="btn-add-million" class="settings-action-btn primary">+ $1,000,000</button>
+                <p class="modal-hint">This option is to test all features of the game. If you are in a hurry, we do not recommend this option and it ends all the fun.</p>
             </div>
             
-            <div style="padding-bottom:15px;border-bottom:1px solid var(--border-color);">
-                <button id="btn-trigger-pitstop" class="primary-btn" style="width:100%;margin-bottom:10px;background:var(--accent-sector);color:#000;">Trigger Pit Stop</button>
-                <p style="font-size:12px;color:var(--text-muted);margin:0;">This is for testing pit stop while development and it's been left in if you want to try the pit stop minigame at any time.</p>
+            <div class="modal-section">
+                <button id="btn-trigger-pitstop" class="settings-action-btn accent">Trigger Pit Stop</button>
+                <p class="modal-hint">This is for testing pit stop while development and it's been left in if you want to try the pit stop minigame at any time.</p>
             </div>
 
-            <div style="padding-bottom:15px;border-bottom:1px solid var(--border-color);">
-                <button id="btn-delete-progress" class="secondary-btn" style="width:100%;border-color:#e63946;color:#e63946;">Delete Your Progress</button>
+            <div class="modal-section">
+                <button id="btn-delete-progress" class="settings-action-btn danger-outline">Delete Your Progress</button>
             </div>
 
-            <div style="text-align: center; font-size: 14px; color: var(--text-muted); margin-top: 5px;">
+            <div class="modal-footer">
                 Made with 🩶 by Aryan Raj<br>
-                <a href="https://thiswasaryan.in" target="_blank" style="color: var(--accent-sector); text-decoration: none;">thiswasaryan.in</a>
+                <a href="https://thiswasaryan.in" target="_blank">thiswasaryan.in</a>
             </div>
         </div>
     </div>
     
-    <div id="delete-confirm-modal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);z-index:10000;align-items:center;justify-content:center;">
-        <div style="background:var(--bg-panel);padding:30px;border-radius:12px;width:400px;max-width:90%;border:1px solid #e63946;display:flex;flex-direction:column;gap:20px;">
-            <h2 style="margin:0;color:#e63946;">Delete Progress</h2>
+    <div id="delete-confirm-modal" class="modal-overlay" style="z-index:10000;">
+        <div class="modal-card" style="border-color: var(--accent-primary);">
+            <div class="modal-header">
+                <h2 style="color: var(--accent-primary);">Delete Progress</h2>
+            </div>
             <p style="color:var(--text-secondary);font-size:14px;margin:0;">To confirm deletion, type <strong>DELETE</strong> below.</p>
-            <input type="text" id="delete-confirm-input" style="background:var(--bg-surface);border:1px solid var(--border-color);color:var(--text-primary);padding:10px;border-radius:6px;font-family:monospace;outline:none;" placeholder="Type DELETE">
+            <input type="text" id="delete-confirm-input" class="confirm-input" placeholder="Type DELETE">
             <div style="display:flex;gap:10px;">
-                <button id="btn-cancel-delete" class="secondary-btn" style="flex:1;">Cancel</button>
-                <button id="btn-confirm-delete" class="primary-btn" style="flex:1;background:#e63946;opacity:0.5;pointer-events:none;">Confirm</button>
+                <button id="btn-cancel-delete" class="settings-action-btn danger-outline" style="border-color:var(--border-color);color:var(--text-primary);">Cancel</button>
+                <button id="btn-confirm-delete" class="settings-action-btn primary" style="background:var(--accent-primary);opacity:0.5;pointer-events:none;">Confirm</button>
             </div>
         </div>
     </div>
@@ -112,11 +114,18 @@ export function initRender(gameState) {
   });
 
   settingsToggle.addEventListener("click", () => {
-    settingsModal.style.display = "flex";
+    settingsModal.classList.add("visible");
   });
 
   closeSettingsBtn.addEventListener("click", () => {
-    settingsModal.style.display = "none";
+    settingsModal.classList.remove("visible");
+  });
+
+  // Close modal on backdrop click
+  settingsModal.addEventListener("click", (e) => {
+    if (e.target === settingsModal) {
+      settingsModal.classList.remove("visible");
+    }
   });
 
   document.getElementById("btn-add-million").addEventListener("click", () => {
@@ -125,7 +134,7 @@ export function initRender(gameState) {
   });
 
   document.getElementById("btn-trigger-pitstop").addEventListener("click", () => {
-    settingsModal.style.display = "none";
+    settingsModal.classList.remove("visible");
     EventBus.emit("pitstop:active", {});
   });
 
@@ -134,17 +143,27 @@ export function initRender(gameState) {
   const confirmDelBtn = document.getElementById("btn-confirm-delete");
 
   document.getElementById("btn-delete-progress").addEventListener("click", () => {
-    settingsModal.style.display = "none";
-    deleteModal.style.display = "flex";
-    delInput.value = "";
-    confirmDelBtn.style.opacity = "0.5";
-    confirmDelBtn.style.pointerEvents = "none";
-    delInput.focus();
+    settingsModal.classList.remove("visible");
+    // Small delay so settings fades out before delete fades in
+    setTimeout(() => {
+      deleteModal.classList.add("visible");
+      delInput.value = "";
+      confirmDelBtn.style.opacity = "0.5";
+      confirmDelBtn.style.pointerEvents = "none";
+      delInput.focus();
+    }, 150);
   });
 
   document.getElementById("btn-cancel-delete").addEventListener("click", () => {
-    deleteModal.style.display = "none";
-    settingsModal.style.display = "flex";
+    deleteModal.classList.remove("visible");
+    setTimeout(() => settingsModal.classList.add("visible"), 150);
+  });
+
+  // Close delete modal on backdrop click
+  deleteModal.addEventListener("click", (e) => {
+    if (e.target === deleteModal) {
+      deleteModal.classList.remove("visible");
+    }
   });
 
   delInput.addEventListener("input", (e) => {
@@ -168,3 +187,4 @@ export function initRender(gameState) {
     location.reload();
   });
 }
+

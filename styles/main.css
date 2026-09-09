@@ -8,6 +8,10 @@
 @import url("./components/achievements.css");
 @import url("./components/endgame.css");
 
+* {
+  box-sizing: border-box;
+}
+
 body {
   background-color: var(--bg-void);
   color: var(--text-primary);
@@ -19,8 +23,30 @@ body {
   justify-content: center;
   align-items: center;
   height: 100vh;
+  height: 100dvh; /* dynamic viewport height — avoids mobile browser bar issues */
 }
 
 .monospace {
   font-family: ui-monospace, "SF Mono", Consolas, "Courier New", monospace;
+}
+
+/* Utility: prevent pull-to-refresh on mobile */
+html {
+  overscroll-behavior: none;
+}
+
+/* Secondary button style (used in settings modal) */
+.secondary-btn {
+  background: transparent;
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.secondary-btn:hover {
+  background-color: var(--bg-surface);
 }

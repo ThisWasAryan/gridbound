@@ -1,4 +1,5 @@
 import { EventBus } from "../utils/eventBus.js";
+import { createParticleBurst } from "../fx/particleSystem.js";
 
 let endgameOverlay;
 let hasTriggered = false;
@@ -34,8 +35,15 @@ function checkEndgame(payload) {
 
 function showEndgame() {
   endgameOverlay.classList.remove("hidden");
-  // Some fun particle bursts
-  const center = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
-  EventBus.emit("fx:burst", { x: center.x - 100, y: center.y, count: 50, colors: ["#ffd700", "#ffffff"] });
-  EventBus.emit("fx:burst", { x: center.x + 100, y: center.y, count: 50, colors: ["#ffd700", "#ffffff"] });
+
+  // Celebration particle bursts
+  const cx = window.innerWidth / 2;
+  const cy = window.innerHeight / 2;
+  createParticleBurst(cx - 120, cy - 40, 40, ["#ffd700", "#ffffff", "#B26BFF"]);
+  createParticleBurst(cx + 120, cy - 40, 40, ["#ffd700", "#ffffff", "#B26BFF"]);
+  // Staggered secondary bursts
+  setTimeout(() => createParticleBurst(cx, cy - 80, 30, ["#ffd700", "#E63946"]), 300);
+  setTimeout(() => createParticleBurst(cx - 60, cy + 40, 25, ["#38bdf8", "#ffd700"]), 600);
+  setTimeout(() => createParticleBurst(cx + 60, cy + 40, 25, ["#38bdf8", "#ffd700"]), 600);
 }
+

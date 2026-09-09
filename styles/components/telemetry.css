@@ -61,14 +61,17 @@
 @media (max-width: 768px) {
   .telemetry-panel {
     flex-wrap: wrap;
-    gap: 15px;
+    gap: 10px;
     justify-content: center;
   }
   .telemetry-data {
     gap: 15px;
   }
+  .data-block .label {
+    font-size: 10px;
+  }
   .data-block .value {
-    font-size: 24px;
+    font-size: 20px;
     white-space: nowrap; /* prevent numbers from wrapping */
   }
   .primary-btn {

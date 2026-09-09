@@ -87,47 +87,75 @@
   flex-direction: column;
 }
 
+/* ═══════════════════════════════════════════════
+   MOBILE LAYOUT
+   - Top section (track + telemetry) is STATIC
+   - Bottom section (shop/upgrades) is SCROLLABLE
+   ═══════════════════════════════════════════════ */
 @media (max-width: 768px) {
   #game-container {
     flex-direction: column;
-    height: 100dvh; /* Fix mobile browser URL bar cutoff */
+    height: 100dvh; /* dynamic viewport height for mobile browsers */
+    height: 100vh; /* fallback for older browsers */
+    height: 100dvh;
+  }
+
+  /* Game title: reduce size and remove excess top space */
+  #game-title {
+    top: 8px;
+    font-size: 18px;
+    letter-spacing: 4px;
+  }
+
+  /* Top area: track + telemetry — fixed height, no growth */
+  #main-view {
+    flex: none;
+    height: 42dvh;
+    height: 42vh; /* fallback */
+    height: 42dvh;
+    min-height: 0;
   }
 
   #track-section {
-    padding: 10px;
-    padding-top: 50px; /* space for toggles and title */
+    padding: 8px 10px;
+    padding-top: 36px; /* space for top controls + title, tighter than before */
     flex-direction: column-reverse; /* track above, name below */
+    min-height: 0;
   }
 
   .track-name-overlay {
-    font-size: 16px;
+    font-size: 14px;
     text-align: center;
-    margin-bottom: 10px; /* added space after karting circuit */
-    margin-top: 10px;
+    margin-bottom: 6px;
+    margin-top: 6px;
   }
 
+  /* Bottom area: side panel takes all remaining space and scrolls */
   #side-panel {
     width: 100%;
     border-left: none;
     border-top: 2px solid var(--border-color);
-    flex: 1; /* allow it to grow in column mode */
+    flex: 1;
+    min-height: 0; /* critical: allows flex child to shrink below content size */
+    overflow: hidden; /* contain the scroll within */
   }
 
   #telemetry-section {
-    padding: 15px; /* more spacious */
+    padding: 10px 15px;
     height: auto;
-    min-height: 80px;
+    min-height: 60px;
     flex-wrap: wrap;
-    justify-content: space-around; /* spread items out */
-    gap: 15px;
+    justify-content: space-around;
+    gap: 10px;
   }
 
+  /* Controls bar repositioned to top on mobile */
   #bottom-left-controls {
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
-    padding: 15px 20px !important;
+    padding: 10px 16px !important;
     border-top: none !important;
     background: transparent !important;
     justify-content: space-between !important;
@@ -138,11 +166,4 @@
   #bottom-left-controls > * {
     pointer-events: auto; /* Re-enable clicks for toggles */
   }
-
-  /* Adjust map height on mobile */
-  #main-view {
-    flex: none;
-    height: 45vh; /* slightly less to give shop more room */
-  }
 }
-
