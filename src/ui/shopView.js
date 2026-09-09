@@ -250,9 +250,9 @@ function renderTracks(container) {
     } else if (!isActive && !isOwned) {
       const btn = document.getElementById(`buy-track-btn-${config.id}`);
       btn.addEventListener("click", () => {
+        const rect = btn.getBoundingClientRect();
         if (buyTrack(config.id)) {
           AudioCues.purchase();
-          const rect = btn.getBoundingClientRect();
           createParticleBurst(
             rect.left + rect.width / 2,
             rect.top + rect.height / 2,
@@ -357,9 +357,9 @@ function renderGarage(container) {
       const btn = document.getElementById(`buy-car-btn-${config.id}`);
       if (btn) {
         btn.addEventListener("click", () => {
+          const rect = btn.getBoundingClientRect();
           if (buyCar(config.id)) {
             AudioCues.purchase();
-            const rect = btn.getBoundingClientRect();
             createParticleBurst(
               rect.left + rect.width / 2,
               rect.top + rect.height / 2,
@@ -539,9 +539,9 @@ function renderTeam(container) {
     } else if (!isActive && !isOwned) {
       const btn = document.getElementById(`buy-principal-btn-${config.id}`);
       btn.addEventListener("click", () => {
+        const rect = btn.getBoundingClientRect();
         if (hirePrincipal(config.id)) {
           AudioCues.purchase();
-          const rect = btn.getBoundingClientRect();
           createParticleBurst(
             rect.left + rect.width / 2,
             rect.top + rect.height / 2,
