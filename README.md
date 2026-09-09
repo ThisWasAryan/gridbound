@@ -1,6 +1,7 @@
 # Gridbound
 
 Gridbound is a minimalist, browser-based incremental racing game. Players start at the karting level and progressively upgrade their vehicles, manage economy, and hire team personnel to climb the ranks of motorsport up to the Formula 1 tier.
+<img width="1919" height="960" alt="image" src="https://github.com/user-attachments/assets/3f2f5d4c-1a96-4fbd-a9be-5b058fbbee27" />
 
 ## Live Deployment
 
