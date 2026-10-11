@@ -7,6 +7,7 @@ export const CARS_CONFIG = {
     baseTyre: 1.0,
     cost: 0,
     svgPath: "assets/svg/cars/kart.svg",
+    upgradeMultiplier: 1,
   },
   f4: {
     id: "f4",
@@ -16,6 +17,7 @@ export const CARS_CONFIG = {
     baseTyre: 2.8,
     cost: 10000,
     svgPath: "assets/svg/cars/f4.svg",
+    upgradeMultiplier: 3,
   },
   f3: {
     id: "f3",
@@ -25,6 +27,7 @@ export const CARS_CONFIG = {
     baseTyre: 5.5,
     cost: 150000,
     svgPath: "assets/svg/cars/f3.svg",
+    upgradeMultiplier: 10,
   },
   f2: {
     id: "f2",
@@ -34,6 +37,7 @@ export const CARS_CONFIG = {
     baseTyre: 10.5,
     cost: 2000000,
     svgPath: "assets/svg/cars/f2.svg",
+    upgradeMultiplier: 50,
   },
   f1: {
     id: "f1",
@@ -43,5 +47,6 @@ export const CARS_CONFIG = {
     baseTyre: 20.0,
     cost: 50000000,
     svgPath: "assets/svg/cars/f1.svg",
+    upgradeMultiplier: 250,
   }
 };

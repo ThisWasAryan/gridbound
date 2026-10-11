@@ -17,4 +17,8 @@ docs/
 check.js
 syntax_test.js
 test.js
+screenshot.js
+scratch/
+tests/
 fix_racelines.py
+HANDOFF.md

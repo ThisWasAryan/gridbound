@@ -1,18 +1,125 @@
+/* ═══════════════════════════════════════════════
+   F1 TEAM RADIO BROADCAST BANNER
+   ═══════════════════════════════════════════════ */
+.f1-radio-banner {
+  position: fixed;
+  top: 28px;
+  left: 50%;
+  transform: translate(-50%, -24px);
+  background: var(--glass-bg-strong);
+  border: 1.5px solid var(--accent-primary);
+  border-radius: var(--radius-md);
+  padding: 10px 24px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  z-index: var(--z-modal);
+  opacity: 0;
+  pointer-events: none;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  transition: transform var(--duration-normal) var(--ease-spring),
+              opacity var(--duration-normal) ease,
+              box-shadow var(--duration-normal) ease;
+  font-family: 'Outfit', 'Inter', -apple-system, sans-serif;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.6);
+}
+
+body.light-mode .f1-radio-banner {
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.12);
+}
+
+.f1-radio-banner.visible {
+  transform: translate(-50%, 0);
+  opacity: 1;
+}
+
+.f1-radio-banner.hidden {
+  display: none;
+}
+
+.radio-tag {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background-color: var(--accent-primary-subtle);
+  border: 1px solid rgba(255, 45, 85, 0.25);
+  padding: 4px 10px;
+  border-radius: var(--radius-xs);
+}
+
+.radio-icon {
+  font-size: 14px;
+}
+
+.radio-team {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  color: var(--accent-primary);
+  text-transform: uppercase;
+}
+
+.radio-msg {
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  color: var(--text-primary);
+  text-transform: uppercase;
+}
+
+.radio-waveform {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  height: 16px;
+}
+
+.radio-waveform span {
+  width: 3px;
+  height: 6px;
+  background-color: var(--accent-primary);
+  border-radius: 2px;
+  animation: radioWave 0.6s infinite alternate ease-in-out;
+}
+
+.radio-waveform span:nth-child(2) {
+  animation-delay: 0.15s;
+}
+.radio-waveform span:nth-child(3) {
+  animation-delay: 0.3s;
+}
+.radio-waveform span:nth-child(4) {
+  animation-delay: 0.45s;
+}
+
+@keyframes radioWave {
+  0% { height: 4px; opacity: 0.5; }
+  100% { height: 16px; opacity: 1; }
+}
+
+/* ═══════════════════════════════════════════════
+   PIT STOP OVERLAY & MODAL
+   ═══════════════════════════════════════════════ */
 .pitstop-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-color: rgba(0, 0, 0, 0.7);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
+  background-color: rgba(5, 7, 12, 0.82);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 2000;
+  z-index: var(--z-modal-backdrop);
   opacity: 1;
-  transition: opacity 0.3s ease;
+  transition: opacity var(--duration-normal) ease;
+}
+
+body.light-mode .pitstop-overlay {
+  background-color: rgba(15, 23, 42, 0.55);
 }
 
 .pitstop-overlay.hidden {
@@ -21,42 +128,223 @@
 }
 
 .pitstop-modal {
-  background-color: var(--bg-panel);
-  padding: 36px;
-  border-radius: 12px;
-  border: 1px solid var(--border-color);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.04) 0%, transparent 40%), var(--bg-panel);
+  padding: 32px 36px;
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--border-hover);
   text-align: center;
-  width: 460px;
-  max-width: 90%;
+  width: 520px;
+  max-width: 92%;
+  position: relative;
+  z-index: var(--z-modal);
   transform: scale(1);
-  transition: transform 0.3s ease;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.6), 0 0 40px rgba(255, 45, 85, 0.1);
+  transition: transform var(--duration-normal) var(--ease-spring),
+              opacity var(--duration-normal) ease;
+}
+
+body.light-mode .pitstop-modal {
+  box-shadow: 0 20px 48px rgba(15, 23, 42, 0.15), 0 0 24px rgba(225, 29, 72, 0.08);
 }
 
 .pitstop-overlay.hidden .pitstop-modal {
-  transform: scale(0.95);
+  transform: scale(0.92);
+}
+
+.pit-badge {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  color: var(--accent-primary);
+  background-color: var(--accent-primary-subtle);
+  border: 1px solid rgba(255, 45, 85, 0.2);
+  padding: 5px 14px;
+  border-radius: var(--radius-full);
+  margin-bottom: 12px;
+  text-transform: uppercase;
 }
 
 .pitstop-modal h2 {
-  color: var(--text-data);
-  margin-top: 0;
-  font-size: 28px;
-  letter-spacing: 2px;
+  color: var(--text-primary);
+  margin: 0 0 16px 0;
+  font-size: 32px;
+  font-weight: 900;
+  letter-spacing: 3px;
+  font-family: 'Outfit', 'Inter', -apple-system, sans-serif;
+  transition: color var(--duration-fast) ease;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
 }
 
-.pitstop-modal p {
+.pitstop-modal h2.quality-perfect {
+  color: var(--accent-success);
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+}
+.pitstop-modal h2.quality-good {
+  color: var(--accent-info);
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+}
+.pitstop-modal h2.quality-bad {
+  color: var(--accent-primary);
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+}
+
+/* ═══════════════════════════════════════════════
+   5.0s COUNTDOWN URGENCY BAR
+   ═══════════════════════════════════════════════ */
+.pit-countdown-wrapper {
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 12px 16px;
+  margin-bottom: 18px;
+  box-shadow: var(--shadow-xs);
+}
+
+.pit-countdown-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.countdown-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
   color: var(--text-secondary);
-  margin-bottom: 24px;
-  font-size: 14px;
+  text-transform: uppercase;
 }
 
+.countdown-clock {
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  color: var(--text-primary);
+  font-family: 'Outfit', monospace;
+}
+
+.pit-countdown-track {
+  width: 100%;
+  height: 8px;
+  background-color: var(--bg-void);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.4);
+}
+
+.pit-countdown-fill {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, #00ffaa 0%, #00e68a 100%);
+  border-radius: var(--radius-full);
+  transition: background-color 0.2s linear;
+  box-shadow: 0 0 10px rgba(0, 230, 138, 0.4);
+}
+
+/* ═══════════════════════════════════════════════
+   4-TIRE GRID HUD
+   ═══════════════════════════════════════════════ */
+.pit-tires-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.tire-node {
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 10px 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: all var(--duration-fast) ease;
+}
+
+.tire-pos {
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  color: var(--text-secondary);
+}
+
+.tire-status {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.8px;
+  color: var(--text-muted);
+}
+
+.tire-node.active {
+  border-color: #f59e0b;
+  background-color: rgba(245, 158, 11, 0.12);
+  box-shadow: 0 0 12px rgba(245, 158, 11, 0.2);
+}
+.tire-node.active .tire-status {
+  color: #f59e0b;
+}
+
+.tire-node.fitted {
+  border-color: var(--accent-success);
+  background-color: rgba(0, 230, 138, 0.1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+.tire-node.fitted .tire-status {
+  color: var(--accent-success);
+}
+
+.tire-node.jammed {
+  border-color: var(--accent-primary);
+  background-color: var(--accent-primary-subtle);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+.tire-node.jammed .tire-status {
+  color: var(--accent-primary);
+}
+
+.pit-instructions {
+  color: var(--text-secondary);
+  margin: 0 0 16px 0;
+  font-size: 13.5px;
+  line-height: 1.4;
+}
+
+.pit-instructions strong {
+  color: var(--text-primary);
+}
+
+/* ═══════════════════════════════════════════════
+   SLIDER ALIGNMENT BAR
+   ═══════════════════════════════════════════════ */
 .slider-container {
   width: 100%;
-  height: 30px;
+  height: 38px;
   background-color: var(--bg-void);
-  border-radius: 15px;
+  border-radius: var(--radius-md);
   position: relative;
   overflow: hidden;
-  margin-bottom: 24px;
+  margin-bottom: 22px;
+  border: 1px solid var(--border-color);
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.5);
+}
+
+.slider-center-notch {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 2px;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.6);
+  z-index: 5;
+  pointer-events: none;
+  box-shadow: 0 0 4px rgba(255, 255, 255, 0.4);
+}
+
+body.light-mode .slider-center-notch {
+  background-color: rgba(15, 23, 42, 0.45);
 }
 
 .zone {
@@ -67,62 +355,161 @@
 .bad-zone-left {
   width: 30%;
   left: 0;
-  background-color: var(--accent-primary);
+  background: linear-gradient(90deg, rgba(255, 45, 85, 0.75) 0%, rgba(255, 45, 85, 0.65) 100%);
 }
 .good-zone-left {
   width: 15%;
   left: 30%;
-  background-color: var(--accent-caution);
+  background: linear-gradient(90deg, rgba(245, 158, 11, 0.75) 0%, rgba(245, 158, 11, 0.85) 100%);
 }
 .perfect-zone {
   width: 10%;
   left: 45%;
-  background-color: #38bdf8;
+  background: linear-gradient(90deg, #00ffaa 0%, #00e68a 100%);
+  box-shadow: 0 0 12px rgba(0, 255, 170, 0.5);
 }
 .good-zone-right {
   width: 15%;
   left: 55%;
-  background-color: var(--accent-caution);
+  background: linear-gradient(90deg, rgba(245, 158, 11, 0.85) 0%, rgba(245, 158, 11, 0.75) 100%);
 }
 .bad-zone-right {
   width: 30%;
   left: 70%;
-  background-color: var(--accent-primary);
+  background: linear-gradient(90deg, rgba(255, 45, 85, 0.65) 0%, rgba(255, 45, 85, 0.75) 100%);
 }
 
 .slider-cursor {
   width: 6px;
-  height: 40px;
-  background-color: white;
+  height: 48px;
+  background-color: #ffffff;
   position: absolute;
   top: -5px;
   left: 0%;
   transform: translateX(-50%);
-  box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
   border-radius: 3px;
   z-index: 10;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 0 2px 6px rgba(0, 0, 0, 0.5);
 }
 
-/* Pitstop action buttons — consistent with modal system */
+/* ═══════════════════════════════════════════════
+   PIT STOP ACTION BUTTONS
+   ═══════════════════════════════════════════════ */
 .pitstop-actions {
   display: flex;
-  gap: 10px;
   justify-content: center;
-  margin-top: 16px;
+  align-items: center;
 }
 
-.pitstop-actions .secondary-btn {
-  background: transparent;
-  border: 1px solid var(--border-color);
-  color: var(--text-secondary);
-  padding: 10px 24px;
-  border-radius: 8px;
-  font-weight: 600;
+.pit-submit-btn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 44px;
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  background: var(--gradient-accent);
+  color: #ffffff;
+  border: none;
+  border-radius: var(--radius-sm);
   cursor: pointer;
-  transition: background-color 0.15s, color 0.15s;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.4);
+  transition: transform var(--duration-fast) var(--ease-spring),
+              box-shadow var(--duration-fast) ease;
+  font-family: 'Outfit', 'Inter', -apple-system, sans-serif;
+  text-transform: uppercase;
 }
 
-.pitstop-actions .secondary-btn:hover {
-  background-color: var(--bg-surface);
-  color: var(--text-primary);
+.pit-submit-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 12px rgba(0, 0, 0, 0.45);
+}
+
+.pit-submit-btn:active {
+  transform: scale(0.97);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
+}
+
+.key-badge {
+  font-size: 11px;
+  font-weight: 800;
+  background-color: rgba(0, 0, 0, 0.3);
+  padding: 3px 8px;
+  border-radius: 4px;
+  letter-spacing: 1px;
+}
+
+body.light-mode .key-badge {
+  background-color: rgba(255, 255, 255, 0.3);
+  color: #ffffff;
+}
+
+/* ═══════════════════════════════════════════════
+   MOBILE PIT STOP SCALING
+   ═══════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  .f1-radio-banner {
+    top: 14px;
+    padding: 8px 14px;
+    gap: 8px;
+    max-width: 94vw;
+    box-sizing: border-box;
+    justify-content: center;
+  }
+
+  .radio-tag {
+    padding: 3px 6px;
+    gap: 4px;
+    flex-shrink: 0;
+  }
+
+  .radio-team {
+    font-size: 10px;
+    letter-spacing: 1px;
+  }
+
+  .radio-msg {
+    font-size: clamp(11px, 3.2vw, 13px);
+    letter-spacing: 1px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .radio-waveform {
+    display: none;
+  }
+
+  .pitstop-modal {
+    padding: 22px 16px;
+    width: 92vw;
+    max-width: 380px;
+    box-sizing: border-box;
+    border-radius: var(--radius-lg);
+  }
+
+  .pit-badge {
+    font-size: 9.5px;
+    letter-spacing: 1.2px;
+    padding: 4px 10px;
+  }
+
+  .pitstop-modal h2 {
+    font-size: clamp(20px, 5.5vw, 24px);
+    letter-spacing: 1.5px;
+    margin: 0 0 10px 0;
+  }
+
+  .pit-countdown-wrapper {
+    padding: 8px 12px;
+    margin-bottom: 12px;
+  }
+
+  .pit-submit-btn {
+    padding: 12px 20px;
+    font-size: 14px;
+    width: 100%;
+    justify-content: center;
+  }
 }

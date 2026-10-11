@@ -31,8 +31,17 @@ export function buyUpgrade(upgradeId) {
     currentLevel = state.team[`${upgradeId}Level`];
   }
 
+  if (config.maxLevel && currentLevel >= config.maxLevel) {
+    return false;
+  }
+
+  let multiplier = 1;
+  if (config.type === "per-car") {
+    const carId = state.session.currentCarId;
+    multiplier = (CARS_CONFIG[carId] && CARS_CONFIG[carId].upgradeMultiplier) || 1;
+  }
   const cost = calculateUpgradeCost(
-    config.baseCost,
+    config.baseCost * multiplier,
     config.growthRate,
     currentLevel,
   );
@@ -41,6 +50,7 @@ export function buyUpgrade(upgradeId) {
 
   // Deduct cost
   state.economy.credits -= cost;
+  state.economy.credits = Math.round(state.economy.credits * 100) / 100;
 
   // Apply upgrade
   if (config.type === "per-car") {
@@ -78,6 +88,7 @@ export function buyTrack(trackId) {
   if (state.economy.credits < config.cost) return false;
 
   state.economy.credits -= config.cost;
+  state.economy.credits = Math.round(state.economy.credits * 100) / 100;
 
   if (!state.tracks[trackId]) {
     state.tracks[trackId] = {};
@@ -122,6 +133,7 @@ export function buyCar(carId) {
   if (state.economy.credits < config.cost) return false;
 
   state.economy.credits -= config.cost;
+  state.economy.credits = Math.round(state.economy.credits * 100) / 100;
 
   if (!state.cars[carId]) {
     state.cars[carId] = { engineLevel: 0, aeroLevel: 0, tyreLevel: 0 };

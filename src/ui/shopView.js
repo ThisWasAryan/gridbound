@@ -1,3 +1,12 @@
+function getUpgradeCost(config, level) {
+  let mult = 1;
+  if (config.type === "per-car") {
+    const carId = stateRef.session.currentCarId;
+    mult = (CARS_CONFIG[carId] && CARS_CONFIG[carId].upgradeMultiplier) || 1;
+  }
+  return calculateUpgradeCost(config.baseCost * mult, config.growthRate, level);
+}
+
 import {
   UPGRADES_CONFIG,
   calculateUpgradeCost,
@@ -28,6 +37,8 @@ export function initShopView(container, state) {
   stateRef = state;
 
   renderBase();
+  shopContainer.removeEventListener("click", handleShopClick);
+  shopContainer.addEventListener("click", handleShopClick);
   renderContent();
 
   EventBus.on("credits:changed", updateButtonStates);
@@ -150,12 +161,9 @@ function renderUpgrades(container) {
 
   Object.values(UPGRADES_CONFIG).forEach((config) => {
     const currentLevel = getCurrentLevel(config);
-    const cost = calculateUpgradeCost(
-      config.baseCost,
-      config.growthRate,
-      currentLevel,
-    );
-    const affordable = stateRef.economy.credits >= cost;
+    const isMaxed = config.maxLevel && currentLevel >= config.maxLevel;
+    const cost = getUpgradeCost(config, currentLevel);
+    const affordable = stateRef.economy.credits >= cost && !isMaxed;
 
     let iconSvg = '';
     if (config.id === 'engine') iconSvg = `<svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>`;
@@ -168,11 +176,17 @@ function renderUpgrades(container) {
     html += `
             <div class="upgrade-item" id="upgrade-item-${config.id}">
                 <div class="upgrade-info">
-                    <span class="upgrade-name" style="display:flex; align-items:center; gap:6px;">${iconSvg} ${config.name} Lvl <span id="lvl-${config.id}">${currentLevel}</span></span>
+                    <span class="upgrade-name" style="display:flex; align-items:center; gap:8px;">
+                        ${iconSvg} 
+                        <span>${config.name}</span>
+                        <span style="background: var(--bg-surface-hover); padding: 2px 6px; border-radius: 4px; font-size: 0.85em; color: var(--text-muted);">
+                            Lvl <span id="lvl-${config.id}">${currentLevel}</span>
+                        </span>
+                    </span>
                     <span class="upgrade-desc">${config.description}</span>
                 </div>
-                <button class="buy-btn ${affordable ? "" : "disabled"}" id="buy-btn-${config.id}" data-id="${config.id}">
-                    ${formatCredits(cost)}
+                <button class="buy-btn ${affordable ? "" : "disabled"}" id="buy-btn-${config.id}" data-action="buy-upgrade" data-id="${config.id}">
+                    ${isMaxed ? "MAXED" : formatCredits(cost)}
                 </button>
             </div>
         `;
@@ -180,23 +194,6 @@ function renderUpgrades(container) {
 
   html += `</div>`;
   container.innerHTML = html;
-
-  // Attach listeners
-  Object.keys(UPGRADES_CONFIG).forEach((id) => {
-    const btn = document.getElementById(`buy-btn-${id}`);
-    btn.addEventListener("click", (e) => {
-      if (buyUpgrade(id)) {
-        AudioCues.purchase();
-        const rect = btn.getBoundingClientRect();
-        createParticleBurst(
-          rect.left + rect.width / 2,
-          rect.top + rect.height / 2,
-          20,
-          ["#FFB020", "#F5F7FA"],
-        );
-      }
-    });
-  });
 }
 
 function renderTracks(container) {
@@ -212,9 +209,9 @@ function renderTracks(container) {
     if (isActive) {
       btnHtml = `<button class="buy-btn disabled">ACTIVE</button>`;
     } else if (isOwned) {
-      btnHtml = `<button class="buy-btn switch-btn" id="switch-track-btn-${config.id}">DRIVE</button>`;
+      btnHtml = `<button class="buy-btn switch-btn" id="switch-track-btn-${config.id}" data-action="switch-track" data-id="${config.id}">DRIVE</button>`;
     } else {
-      btnHtml = `<button class="buy-btn ${affordable ? "" : "disabled"}" id="buy-track-btn-${config.id}">
+      btnHtml = `<button class="buy-btn ${affordable ? "" : "disabled"}" id="buy-track-btn-${config.id}" data-action="buy-track" data-id="${config.id}">
                 ${formatCredits(config.cost)}
             </button>`;
     }
@@ -235,37 +232,6 @@ function renderTracks(container) {
 
   html += `</div>`;
   container.innerHTML = html;
-
-  Object.values(TRACKS_CONFIG).forEach((config) => {
-    const isOwned =
-      stateRef.tracks[config.id] && stateRef.tracks[config.id].owned;
-    const isActive = stateRef.session.currentTrackId === config.id;
-
-    if (!isActive && isOwned) {
-      document
-        .getElementById(`switch-track-btn-${config.id}`)
-        .addEventListener("click", () => {
-          if (!stateRef.runtime.lapActive) {
-            AudioCues.buttonClick();
-            switchTrack(config.id);
-          }
-        });
-    } else if (!isActive && !isOwned) {
-      const btn = document.getElementById(`buy-track-btn-${config.id}`);
-      btn.addEventListener("click", () => {
-        const rect = btn.getBoundingClientRect();
-        if (buyTrack(config.id)) {
-          AudioCues.purchase();
-          createParticleBurst(
-            rect.left + rect.width / 2,
-            rect.top + rect.height / 2,
-            30,
-            ["#38bdf8", "#F5F7FA"],
-          );
-        }
-      });
-    }
-  });
 }
 
 function getCarTotalUpgrades(carId) {
@@ -300,14 +266,14 @@ function renderGarage(container) {
     if (isActive) {
       btnHtml = `<button class="buy-btn disabled">ACTIVE</button>`;
     } else if (isOwned) {
-      btnHtml = `<button class="buy-btn switch-btn" id="switch-car-btn-${config.id}">DRIVE</button>`;
+      btnHtml = `<button class="buy-btn switch-btn" id="switch-car-btn-${config.id}" data-action="switch-car" data-id="${config.id}">DRIVE</button>`;
     } else if (!isUnlocked) {
       btnHtml = `<div style="font-size: 12px; color: #E63946; text-align: right; max-width: 120px;">
                     <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none" style="vertical-align: middle;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
                     <br/>${unlockReason}
                  </div>`;
     } else {
-      btnHtml = `<button class="buy-btn ${affordable ? "" : "disabled"}" id="buy-car-btn-${config.id}">
+      btnHtml = `<button class="buy-btn ${affordable ? "" : "disabled"}" id="buy-car-btn-${config.id}" data-action="buy-car" data-id="${config.id}">
                 ${formatCredits(config.cost)}
             </button>`;
     }
@@ -341,39 +307,6 @@ function renderGarage(container) {
 
   html += `</div>`;
   container.innerHTML = html;
-
-  Object.values(CARS_CONFIG).forEach((config) => {
-    const isOwned = stateRef.cars[config.id] && stateRef.cars[config.id].owned;
-    const isActive = stateRef.session.currentCarId === config.id;
-
-    if (!isActive && isOwned) {
-      const switchBtn = document.getElementById(`switch-car-btn-${config.id}`);
-      if (switchBtn) {
-        switchBtn.addEventListener("click", () => {
-          if (!stateRef.runtime.lapActive) {
-            AudioCues.buttonClick();
-            switchCar(config.id);
-          }
-        });
-      }
-    } else if (!isActive && !isOwned) {
-      const btn = document.getElementById(`buy-car-btn-${config.id}`);
-      if (btn) {
-        btn.addEventListener("click", () => {
-          const rect = btn.getBoundingClientRect();
-          if (buyCar(config.id)) {
-            AudioCues.purchase();
-            createParticleBurst(
-              rect.left + rect.width / 2,
-              rect.top + rect.height / 2,
-              30,
-              ["#E63946", "#F5F7FA"],
-            );
-          }
-        });
-      }
-    }
-  });
 }
 
 function getCurrentLevel(config) {
@@ -388,14 +321,11 @@ function updateButtonStates() {
   if (currentTab === "upgrades") {
     Object.values(UPGRADES_CONFIG).forEach((config) => {
       const currentLevel = getCurrentLevel(config);
-      const cost = calculateUpgradeCost(
-        config.baseCost,
-        config.growthRate,
-        currentLevel,
-      );
+      const isMaxed = config.maxLevel && currentLevel >= config.maxLevel;
+      const cost = getUpgradeCost(config, currentLevel);
       const btn = document.getElementById(`buy-btn-${config.id}`);
       if (btn) {
-        const affordable = stateRef.economy.credits >= cost;
+        const affordable = stateRef.economy.credits >= cost && !isMaxed;
         if (affordable) {
           btn.classList.remove("disabled");
         } else {
@@ -462,12 +392,13 @@ function handleUpgradePurchased({ id, newLevel }) {
     if (lvlSpan) lvlSpan.textContent = newLevel;
 
     if (btn) {
-      const cost = calculateUpgradeCost(
-        config.baseCost,
-        config.growthRate,
-        newLevel,
-      );
-      btn.textContent = formatCredits(cost);
+      const isMaxed = config.maxLevel && newLevel >= config.maxLevel;
+      if (isMaxed) {
+        btn.textContent = "MAXED";
+      } else {
+        const cost = getUpgradeCost(config, newLevel);
+        btn.textContent = formatCredits(cost);
+      }
     }
 
     updateButtonStates();
@@ -494,14 +425,14 @@ function renderTeam(container) {
       const isAuto = stateRef.principals.automationEnabled;
       const playSvg = `<svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>`;
       const stopSvg = `<svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect></svg>`;
-      btnHtml = `<button class="buy-btn toggle-inline-btn" id="toggle-inline-btn" style="background-color: ${isAuto ? "var(--accent-sector)" : "var(--bg-surface)"}; color: ${isAuto ? "#000" : "var(--text-primary)"}; display:flex; align-items:center; justify-content:center; gap:8px;">
+      btnHtml = `<button class="buy-btn toggle-inline-btn" id="toggle-inline-btn" data-action="toggle-automation" style="background-color: ${isAuto ? "var(--accent-sector)" : "var(--bg-surface)"}; color: ${isAuto ? "#000" : "var(--text-primary)"}; display:flex; align-items:center; justify-content:center; gap:8px;">
         ${isAuto ? stopSvg : playSvg}
         ${isAuto ? "ACTIVE" : "PAUSED"}
       </button>`;
     } else if (isOwned) {
-      btnHtml = `<button class="buy-btn switch-btn" id="switch-principal-btn-${config.id}">ACTIVATE</button>`;
+      btnHtml = `<button class="buy-btn switch-btn" id="switch-principal-btn-${config.id}" data-action="switch-principal" data-id="${config.id}">ACTIVATE</button>`;
     } else {
-      btnHtml = `<button class="buy-btn ${affordable ? "" : "disabled"}" id="buy-principal-btn-${config.id}">
+      btnHtml = `<button class="buy-btn ${affordable ? "" : "disabled"}" id="buy-principal-btn-${config.id}" data-action="buy-principal" data-id="${config.id}">
                 ${formatCredits(config.cost)}
             </button>`;
     }
@@ -519,40 +450,55 @@ function renderTeam(container) {
 
   html += `</div>`;
   container.innerHTML = html;
-
-  const inlineBtn = document.getElementById("toggle-inline-btn");
-  if (inlineBtn) {
-    inlineBtn.addEventListener("click", () => {
-      toggleAutomation(!stateRef.principals.automationEnabled);
-    });
-  }
-
-  Object.values(PRINCIPALS).forEach((config) => {
-    const isOwned = stateRef.principals.hiredIds.includes(config.id);
-    const isActive = stateRef.principals.activeId === config.id;
-
-    if (!isActive && isOwned) {
-      document
-        .getElementById(`switch-principal-btn-${config.id}`)
-        .addEventListener("click", () => {
-          AudioCues.buttonClick();
-          stateRef.principals.activeId = config.id;
-          renderContent();
-        });
-    } else if (!isActive && !isOwned) {
-      const btn = document.getElementById(`buy-principal-btn-${config.id}`);
-      btn.addEventListener("click", () => {
-        const rect = btn.getBoundingClientRect();
-        if (hirePrincipal(config.id)) {
-          AudioCues.purchase();
-          createParticleBurst(
-            rect.left + rect.width / 2,
-            rect.top + rect.height / 2,
-            30,
-            ["#00ffaa", "#F5F7FA"],
-          );
-        }
-      });
-    }
-  });
 }
+
+function handleShopClick(e) {
+  const target = e.target.closest("button");
+  if (!target || target.classList.contains("disabled")) return;
+
+  const action = target.dataset.action;
+  const id = target.dataset.id;
+
+  if (action === "buy-upgrade") {
+    if (buyUpgrade(id)) {
+      AudioCues.purchase();
+      const rect = target.getBoundingClientRect();
+      createParticleBurst(rect.left + rect.width / 2, rect.top + rect.height / 2, 20, ["#FFB020", "#F5F7FA"]);
+    }
+  } else if (action === "buy-track") {
+    if (buyTrack(id)) {
+      AudioCues.purchase();
+      const rect = target.getBoundingClientRect();
+      createParticleBurst(rect.left + rect.width / 2, rect.top + rect.height / 2, 30, ["#a855f7", "#F5F7FA"]);
+    }
+  } else if (action === "switch-track") {
+    if (!stateRef.runtime.lapActive) {
+      AudioCues.buttonClick();
+      switchTrack(id);
+    }
+  } else if (action === "buy-car") {
+    if (buyCar(id)) {
+      AudioCues.purchase();
+      const rect = target.getBoundingClientRect();
+      createParticleBurst(rect.left + rect.width / 2, rect.top + rect.height / 2, 30, ["#E63946", "#F5F7FA"]);
+    }
+  } else if (action === "switch-car") {
+    if (!stateRef.runtime.lapActive) {
+      AudioCues.buttonClick();
+      switchCar(id);
+    }
+  } else if (action === "buy-principal") {
+    if (hirePrincipal(id)) {
+      AudioCues.purchase();
+      const rect = target.getBoundingClientRect();
+      createParticleBurst(rect.left + rect.width / 2, rect.top + rect.height / 2, 30, ["#00ffaa", "#F5F7FA"]);
+    }
+  } else if (action === "switch-principal") {
+    AudioCues.buttonClick();
+    stateRef.principals.activeId = id;
+    renderContent();
+  } else if (action === "toggle-automation") {
+    toggleAutomation(!stateRef.principals.automationEnabled);
+  }
+}
+

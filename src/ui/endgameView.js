@@ -43,7 +43,7 @@ function showEndgame() {
   createParticleBurst(cx + 120, cy - 40, 40, ["#ffd700", "#ffffff", "#B26BFF"]);
   // Staggered secondary bursts
   setTimeout(() => createParticleBurst(cx, cy - 80, 30, ["#ffd700", "#E63946"]), 300);
-  setTimeout(() => createParticleBurst(cx - 60, cy + 40, 25, ["#38bdf8", "#ffd700"]), 600);
-  setTimeout(() => createParticleBurst(cx + 60, cy + 40, 25, ["#38bdf8", "#ffd700"]), 600);
+  setTimeout(() => createParticleBurst(cx - 60, cy + 40, 25, ["#a855f7", "#ffd700"]), 600);
+  setTimeout(() => createParticleBurst(cx + 60, cy + 40, 25, ["#a855f7", "#ffd700"]), 600);
 }
 

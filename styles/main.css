@@ -8,14 +8,27 @@
 @import url("./components/achievements.css");
 @import url("./components/endgame.css");
 
-* {
+/* ═══════════════════════════════════════════════
+   CSS RESET & BASE
+   ═══════════════════════════════════════════════ */
+*,
+*::before,
+*::after {
   box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  overscroll-behavior: none;
+  -webkit-tap-highlight-color: transparent;
+  text-size-adjust: 100%;
 }
 
 body {
   background-color: var(--bg-void);
   color: var(--text-primary);
-  font-family: -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-family: "Inter", -apple-system, "Segoe UI", Roboto, sans-serif;
   margin: 0;
   padding: 0;
   overflow: hidden;
@@ -23,30 +36,114 @@ body {
   justify-content: center;
   align-items: center;
   height: 100vh;
-  height: 100dvh; /* dynamic viewport height — avoids mobile browser bar issues */
+  height: 100dvh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
+/* ═══════════════════════════════════════════════
+   TYPOGRAPHY UTILITIES
+   ═══════════════════════════════════════════════ */
 .monospace {
-  font-family: ui-monospace, "SF Mono", Consolas, "Courier New", monospace;
+  font-family: ui-monospace, "SF Mono", "Cascadia Code", Consolas, "Courier New", monospace;
 }
 
-/* Utility: prevent pull-to-refresh on mobile */
-html {
-  overscroll-behavior: none;
+/* ═══════════════════════════════════════════════
+   SELECTION STYLING
+   ═══════════════════════════════════════════════ */
+::selection {
+  background-color: var(--accent-primary-subtle);
+  color: var(--text-primary);
+}
+
+/* ═══════════════════════════════════════════════
+   FOCUS STATES (Accessibility)
+   ═══════════════════════════════════════════════ */
+:focus-visible {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+button:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* ═══════════════════════════════════════════════
+   CUSTOM SCROLLBAR
+   ═══════════════════════════════════════════════ */
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.18);
+}
+
+body.light-mode ::-webkit-scrollbar-thumb {
+  background: rgba(15, 23, 42, 0.12);
+}
+
+body.light-mode ::-webkit-scrollbar-thumb:hover {
+  background: rgba(15, 23, 42, 0.2);
+}
+
+/* Firefox scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
+}
+
+body.light-mode * {
+  scrollbar-color: rgba(15, 23, 42, 0.12) transparent;
+}
+
+/* ═══════════════════════════════════════════════
+   BUTTON BASE
+   ═══════════════════════════════════════════════ */
+button {
+  font-family: inherit;
+  border: none;
+  cursor: pointer;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 /* Secondary button style (used in settings modal) */
 .secondary-btn {
-  background: transparent;
+  background: var(--btn-bg);
   border: 1px solid var(--border-color);
   color: var(--text-primary);
   padding: 10px 20px;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: background-color var(--duration-fast), border-color var(--duration-fast);
 }
 
 .secondary-btn:hover {
-  background-color: var(--bg-surface);
+  background-color: var(--btn-hover);
+  border-color: var(--border-hover);
+}
+
+/* ═══════════════════════════════════════════════
+   REDUCED MOTION
+   ═══════════════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

@@ -1,9 +1,13 @@
+/* ═══════════════════════════════════════════════
+   SHOP PANEL — Right Column Content Area
+   ═══════════════════════════════════════════════ */
 .shop-panel {
-  padding: 20px;
+  padding: 20px 18px;
   display: flex;
   flex-direction: column;
   height: 100%;
-  min-height: 0; /* allow shrinking in flex context */
+  min-height: 0;
+  box-sizing: border-box;
 }
 
 .shop-panel h2 {
@@ -11,129 +15,302 @@
   margin-bottom: 20px;
   color: var(--text-data);
   font-size: 18px;
+  font-weight: 800;
   letter-spacing: 2px;
+  text-transform: uppercase;
+  font-family: 'Outfit', 'Inter', -apple-system, sans-serif;
 }
 
-/* Tabs stay fixed at top of shop panel */
+/* ═══════════════════════════════════════════════
+   SHOP TABS — Modern Pill Switcher
+   ═══════════════════════════════════════════════ */
 .shop-tabs {
   display: flex;
-  flex-wrap: wrap;
-  background-color: var(--bg-surface);
-  border-radius: 8px;
-  overflow: hidden;
-  margin-bottom: 20px;
-  flex-shrink: 0; /* tabs never shrink */
+  background-color: rgba(0, 0, 0, 0.35);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 4px;
+  gap: 4px;
+  margin-bottom: 18px;
+  flex-shrink: 0;
+  width: 100%;
+  box-sizing: border-box;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
 
-/* Content area scrolls independently */
+body.light-mode .shop-tabs {
+  background-color: rgba(15, 23, 42, 0.04);
+}
+
+.tab-btn {
+  flex: 1 1 0;
+  min-width: 0;
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  padding: 9px 6px;
+  cursor: pointer;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 11px;
+  letter-spacing: 0.6px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  position: relative;
+  transition: all var(--duration-fast) var(--ease-smooth);
+  font-family: 'Inter', -apple-system, sans-serif;
+}
+
+.tab-btn svg,
+.tab-btn img {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+  transition: transform var(--duration-fast) ease;
+}
+
+.tab-btn:hover:not(.disabled):not(.active) {
+  background-color: var(--tab-hover);
+  color: var(--text-primary);
+  transform: translateY(-1px);
+}
+
+.tab-btn.active {
+  background: var(--gradient-accent);
+  color: #ffffff;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
+  font-weight: 800;
+}
+
+.tab-btn.active svg,
+.tab-btn.active img {
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
+}
+
+.tab-btn.disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+  filter: grayscale(0.8);
+}
+
+/* ═══════════════════════════════════════════════
+   SCROLLABLE CARD CONTAINER
+   ═══════════════════════════════════════════════ */
 #shop-content-area {
   flex: 1;
-  min-height: 0; /* critical for overflow to work in flex child */
+  min-height: 0;
   overflow-y: auto;
-  -webkit-overflow-scrolling: touch; /* smooth scrolling on iOS */
-  padding-bottom: 20px; /* breathing room at bottom of scroll */
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  padding-right: 2px;
+  padding-bottom: 24px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-hover) transparent;
+}
+
+#shop-content-area::-webkit-scrollbar {
+  width: 5px;
+}
+
+#shop-content-area::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+#shop-content-area::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.12);
+  border-radius: var(--radius-full);
+}
+
+body.light-mode #shop-content-area::-webkit-scrollbar-thumb {
+  background-color: rgba(15, 23, 42, 0.15);
 }
 
 .upgrade-list {
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 10px;
 }
 
+/* ═══════════════════════════════════════════════
+   UPGRADE / SHOP ITEM CARDS
+   ═══════════════════════════════════════════════ */
 .upgrade-item {
-  background-color: var(--bg-surface);
-  border-radius: 8px;
-  padding: 15px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.005) 100%), var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--shadow-xs);
+  transition: transform var(--duration-fast) var(--ease-spring),
+              border-color var(--duration-fast) ease,
+              background-color var(--duration-fast) ease,
+              box-shadow var(--duration-fast) ease;
 }
 
+/* Subtle left indicator accent stripe */
+.upgrade-item::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 3px;
+  height: 100%;
+  background: transparent;
+  transition: background var(--duration-fast) ease;
+}
+
+.upgrade-item:hover {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.01) 100%), var(--bg-surface-hover);
+  border-color: var(--border-hover);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.upgrade-item:hover::before {
+  background: var(--accent-primary);
+}
+
+.upgrade-item.locked {
+  opacity: 0.6;
+  filter: grayscale(0.4);
+}
+
+.upgrade-item.locked:hover {
+  transform: none;
+  box-shadow: var(--shadow-xs);
+}
+
+/* ═══════════════════════════════════════════════
+   ITEM INFO (Left Column in Card)
+   ═══════════════════════════════════════════════ */
 .upgrade-info {
   display: flex;
   flex-direction: column;
   gap: 5px;
   flex: 1;
-  min-width: 0; /* allow text truncation */
+  min-width: 0;
 }
 
 .upgrade-name {
   font-weight: 700;
+  font-size: 14px;
   color: var(--text-primary);
+  letter-spacing: 0.3px;
+  display: flex;
+  align-items: center;
 }
 
 .upgrade-name span {
+  color: var(--text-primary);
+}
+
+.upgrade-name svg {
   color: var(--accent-primary);
 }
 
 .upgrade-desc {
   font-size: 12px;
   color: var(--text-secondary);
+  line-height: 1.4;
 }
 
+/* ═══════════════════════════════════════════════
+   ACTION BUTTONS (BUY / DRIVE / ACTIVE / MAXED)
+   ═══════════════════════════════════════════════ */
 .buy-btn {
-  background-color: var(--btn-bg);
-  color: var(--text-primary);
-  border: none;
-  padding: 10px 15px;
-  border-radius: 6px;
-  font-weight: 600;
+  background: linear-gradient(135deg, rgba(255, 45, 85, 0.15) 0%, rgba(255, 107, 53, 0.15) 100%);
+  color: #ffffff;
+  border: 1px solid var(--accent-primary);
+  padding: 9px 16px;
+  border-radius: var(--radius-sm);
+  font-weight: 700;
   cursor: pointer;
-  margin-left: 15px;
-  font-family: ui-monospace, "SF Mono", Consolas, "Courier New", monospace;
-  transition:
-    background-color 0.2s,
-    transform 0.1s;
-  flex-shrink: 0; /* prevent button from collapsing */
+  margin-left: 12px;
+  font-size: 12px;
+  letter-spacing: 0.6px;
+  font-family: 'Outfit', 'Inter', monospace, sans-serif;
+  transition: all var(--duration-fast) var(--ease-smooth);
+  flex-shrink: 0;
   white-space: nowrap;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
 }
 
 .buy-btn:hover:not(.disabled) {
-  background-color: var(--btn-hover);
+  background: var(--gradient-accent);
+  border-color: transparent;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
 }
 
 .buy-btn:active:not(.disabled) {
-  transform: scale(0.95);
+  transform: scale(0.96);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
+/* Disabled (Not enough credits or maxed) */
 .buy-btn.disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--text-muted);
+  border: 1px solid var(--border-subtle);
+  cursor: default;
+  box-shadow: none;
+  text-shadow: none;
+  transform: none;
 }
 
-.tab-btn {
-  flex: 1;
-  min-width: max-content;
-  background: none;
-  border: none;
-  color: var(--text-secondary);
-  padding: 8px 4px;
-  cursor: pointer;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-  font-size: 11px;
+body.light-mode .buy-btn.disabled {
+  background: rgba(15, 23, 42, 0.03);
+  border-color: rgba(15, 23, 42, 0.06);
 }
 
-.tab-btn:hover:not(.disabled) {
-  background-color: var(--tab-hover);
+/* Switch Button (DRIVE / ACTIVATE) */
+.buy-btn.switch-btn {
+  background: linear-gradient(135deg, #1e2638 0%, #151b2e 100%);
+  border: 1px solid var(--border-hover);
+  color: var(--text-primary);
+  box-shadow: var(--shadow-xs);
+  text-shadow: none;
+}
+
+.buy-btn.switch-btn:hover {
+  background: linear-gradient(135deg, #2a354f 0%, #1c243a 100%);
+  border-color: rgba(255, 255, 255, 0.25);
+  box-shadow: var(--shadow-sm);
+  transform: translateY(-1px);
+}
+
+body.light-mode .buy-btn.switch-btn {
+  background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%);
+  border-color: rgba(15, 23, 42, 0.12);
   color: var(--text-primary);
 }
 
-.tab-btn.active {
-  background-color: var(--tab-active);
-  color: #ffffff;
+body.light-mode .buy-btn.switch-btn:hover {
+  background: linear-gradient(135deg, #cbd5e1 0%, #94a3b8 100%);
+  border-color: rgba(15, 23, 42, 0.25);
 }
 
-.tab-btn.disabled {
-  opacity: 0.3;
-  cursor: not-allowed;
-  text-decoration: line-through;
+/* Automation inline toggle button */
+.buy-btn.toggle-inline-btn {
+  border-radius: var(--radius-sm);
+  font-weight: 800;
+  letter-spacing: 1px;
 }
 
-/* Mobile-specific shop adjustments */
+/* ═══════════════════════════════════════════════
+   MOBILE RESPONSIVENESS
+   ═══════════════════════════════════════════════ */
 @media (max-width: 768px) {
   .shop-panel {
     padding: 12px;
@@ -141,18 +318,35 @@
 
   .shop-tabs {
     margin-bottom: 12px;
+    padding: 3px;
+    gap: 3px;
+  }
+
+  .tab-btn {
+    padding: 8px 4px;
+    font-size: 10.5px;
+    letter-spacing: 0.3px;
   }
 
   #shop-content-area {
-    padding-bottom: 30px; /* extra bottom padding so last item isn't cut off */
+    padding-bottom: 24px;
   }
 
   .upgrade-item {
-    padding: 12px;
+    padding: 12px 14px;
+  }
+
+  .upgrade-name {
+    font-size: 13.5px;
+  }
+
+  .upgrade-desc {
+    font-size: 11.5px;
   }
 
   .buy-btn {
-    padding: 8px 12px;
-    font-size: 13px;
+    padding: 8px 14px;
+    font-size: 11.5px;
+    margin-left: 10px;
   }
 }

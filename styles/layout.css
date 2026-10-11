@@ -1,167 +1,396 @@
+/* ═══════════════════════════════════════════════
+   GAME CONTAINER — Root Layout
+   ═══════════════════════════════════════════════ */
 #game-container {
   width: 100vw;
   height: 100vh;
-  background-color: var(--bg-panel);
+  height: 100dvh;
+  background-color: var(--bg-void);
   display: flex;
   flex-direction: row;
   overflow: hidden;
-  position: relative; /* ensure absolute children stay within container */
+  position: relative;
 }
 
-#game-title {
+/* Ambient gradient backdrop behind track */
+#game-container::before {
+  content: "";
   position: absolute;
-  top: 15px;
-  left: 50%;
-  transform: translateX(-50%);
-  margin: 0;
-  font-size: 28px;
-  font-weight: 900;
-  letter-spacing: 6px;
-  color: var(--text-primary);
-  opacity: 0.25;
-  z-index: 10;
+  top: 0;
+  left: 0;
+  right: 410px;
+  bottom: 0;
+  background: var(--gradient-track-bg);
   pointer-events: none;
-  font-family: 'Inter', -apple-system, sans-serif;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-  white-space: nowrap;
+  z-index: 0;
 }
 
+/* ═══════════════════════════════════════════════
+   MAIN VIEW — Left Side (Track + Telemetry)
+   ═══════════════════════════════════════════════ */
 #main-view {
   flex: 1;
   display: flex;
   flex-direction: column;
+  position: relative;
+  min-width: 0;
+  z-index: 1;
 }
 
+/* ═══════════════════════════════════════════════
+   GAME TITLE
+   ═══════════════════════════════════════════════ */
+#game-title {
+  position: absolute;
+  top: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  margin: 0;
+  font-size: clamp(24px, 2.8vw, 38px);
+  font-weight: 900;
+  letter-spacing: 12px;
+  color: var(--text-primary);
+  opacity: 0.75;
+  z-index: var(--z-overlay-title);
+  pointer-events: none;
+  font-family: 'Outfit', 'Inter', -apple-system, sans-serif;
+  text-shadow: 0 0 24px rgba(255, 45, 85, 0.12), 0 4px 16px rgba(0, 0, 0, 0.4);
+  white-space: nowrap;
+  transition: color var(--duration-fast) ease, opacity var(--duration-fast) ease;
+}
+
+body.light-mode #game-title {
+  text-shadow: 0 0 16px rgba(225, 29, 72, 0.06), 0 2px 8px rgba(0, 0, 0, 0.05);
+  opacity: 0.85;
+}
+
+/* ═══════════════════════════════════════════════
+   TRACK SECTION — Frame & Sizing
+   ═══════════════════════════════════════════════ */
 #track-section {
   flex: 1;
   min-height: 0;
   position: relative;
-  background-color: var(--track-bg);
+  background-color: transparent;
   display: flex;
   flex-direction: column;
-  padding: 20px;
+  padding: 68px 28px 14px 28px; /* Dedicated clearance guarantees zero overlap with header title */
 }
 
 .track-name-overlay {
-  font-size: 24px;
-  font-weight: bold;
+  position: absolute;
+  top: 18px;
+  left: 28px;
+  font-size: 13px;
+  font-weight: 800;
   color: var(--text-primary);
   text-transform: uppercase;
-  letter-spacing: 2px;
-  z-index: 10;
+  letter-spacing: 2.5px;
+  z-index: var(--z-overlay-title);
   pointer-events: none;
-  margin-bottom: 10px;
+  font-family: 'Outfit', 'Inter', sans-serif;
+  opacity: 0.85;
+  padding: 5px 12px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-sm);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+body.light-mode .track-name-overlay {
+  background: rgba(0, 0, 0, 0.03);
+  border-color: rgba(0, 0, 0, 0.08);
+  color: var(--text-secondary);
 }
 
 .track-container {
   flex: 1;
   width: 100%;
   height: 100%;
-  min-height: 0; /* allows it to shrink */
+  min-height: 0;
   display: flex;
   align-items: center;
   justify-content: center;
+  position: relative;
+  background: radial-gradient(ellipse 75% 65% at 50% 50%, rgba(255, 255, 255, 0.02) 0%, transparent 80%);
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  background-color: rgba(9, 11, 16, 0.45);
+  box-shadow: inset 0 0 35px rgba(0, 0, 0, 0.35);
+  overflow: hidden;
+}
+
+body.light-mode .track-container {
+  background: radial-gradient(ellipse 75% 65% at 50% 50%, rgba(0, 0, 0, 0.015) 0%, transparent 80%);
+  border-color: rgba(15, 23, 42, 0.06);
+  background-color: rgba(248, 249, 252, 0.45);
+  box-shadow: inset 0 0 25px rgba(0, 0, 0, 0.02);
 }
 
 .track-container svg {
   width: 100%;
   height: 100%;
-}
-
-#telemetry-section {
-  height: 120px;
-  flex-shrink: 0;
-  min-height: 120px;
-  background-color: var(--bg-panel);
-  border-top: 2px solid var(--border-color);
-  display: flex;
-  align-items: center;
-  padding: 0 40px;
-}
-
-#side-panel {
-  width: 400px;
-  background-color: var(--bg-panel);
-  border-left: 2px solid var(--border-color);
-  display: flex;
-  flex-direction: column;
+  max-width: 95%;
+  max-height: 95%;
+  object-fit: contain;
+  filter: drop-shadow(0 12px 24px rgba(0, 0, 0, 0.5));
 }
 
 /* ═══════════════════════════════════════════════
-   MOBILE LAYOUT
-   - Top section (track + telemetry) is STATIC
-   - Bottom section (shop/upgrades) is SCROLLABLE
+   TELEMETRY SECTION — Bottom HUD Bar
    ═══════════════════════════════════════════════ */
+#telemetry-section {
+  height: 100px;
+  flex-shrink: 0;
+  min-height: 100px;
+  background: linear-gradient(180deg, transparent 0%, rgba(8, 11, 18, 0.6) 100%);
+  display: flex;
+  align-items: center;
+  padding: 0 40px 20px 40px;
+  position: relative;
+  z-index: 2;
+}
+
+body.light-mode #telemetry-section {
+  background: linear-gradient(180deg, transparent 0%, rgba(240, 242, 245, 0.6) 100%);
+}
+
+/* ═══════════════════════════════════════════════
+   SIDE PANEL — Right Column
+   ═══════════════════════════════════════════════ */
+#side-panel {
+  width: 410px;
+  background-color: var(--bg-panel);
+  border-left: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 2;
+  box-shadow: -4px 0 24px rgba(0, 0, 0, 0.2);
+}
+
+/* Subtle top gradient on side panel */
+#side-panel::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 120px;
+  background: var(--gradient-panel);
+  pointer-events: none;
+  z-index: 0;
+}
+
+body.light-mode #side-panel {
+  box-shadow: -4px 0 24px rgba(0, 0, 0, 0.06);
+}
+
+/* ═══════════════════════════════════════════════
+   BOTTOM CONTROLS — Theme/Settings/Help
+   ═══════════════════════════════════════════════ */
+#bottom-left-controls {
+  padding: 14px 20px;
+  display: flex;
+  gap: 10px;
+  border-top: 1px solid var(--border-color);
+  background-color: var(--bg-panel);
+  align-items: center;
+  justify-content: flex-start;
+  position: relative;
+  z-index: 1;
+}
+
+.control-icon-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius-md);
+  background-color: var(--btn-bg);
+  border: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all var(--duration-fast) ease;
+}
+
+.control-icon-btn:hover {
+  background-color: var(--btn-hover);
+  color: var(--text-primary);
+  border-color: var(--border-hover);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+
+.control-icon-btn:active {
+  transform: translateY(0) scale(0.95);
+}
+
+/* ═══════════════════════════════════════════════════════
+   MOBILE LAYOUT
+   ═══════════════════════════════════════════════════════ */
 @media (max-width: 768px) {
   #game-container {
     flex-direction: column;
-    height: 100dvh; /* dynamic viewport height for mobile browsers */
-    height: 100vh; /* fallback for older browsers */
     height: 100dvh;
+    height: 100vh;
   }
 
-  /* Game title: reduce size and remove excess top space */
+  /* Ambient gradient on mobile covers full screen */
+  #game-container::before {
+    right: 0;
+    bottom: 50%;
+  }
+
   #game-title {
-    top: 8px;
-    font-size: 18px;
-    letter-spacing: 4px;
+    top: 14px;
+    font-size: 22px;
+    letter-spacing: 7px;
+    font-weight: 900;
+    color: var(--text-primary);
+    opacity: 0.95;
+    text-shadow: 0 0 24px rgba(255, 45, 85, 0.22), 0 2px 10px rgba(0, 0, 0, 0.6);
   }
 
-  /* Top area: track + telemetry — responsive height, no growth */
   #main-view {
     flex: none;
-    height: 42vh; /* fallback */
-    height: clamp(240px, 40dvh, 46dvh);
+    height: clamp(310px, 47dvh, 54dvh);
     min-height: 0;
   }
 
   #track-section {
-    padding: 8px 10px;
-    padding-top: 36px; /* space for top controls + title, tighter than before */
-    flex-direction: column-reverse; /* track above, name below */
+    padding: 2px 8px;
+    padding-top: 48px;
+    flex-direction: column-reverse;
     min-height: 0;
+    flex: 1;
+    overflow: visible;
   }
 
   .track-name-overlay {
-    font-size: 14px;
+    position: static;
+    font-size: 11px;
+    letter-spacing: 2.5px;
     text-align: center;
-    margin-bottom: 6px;
-    margin-top: 6px;
+    margin: 4px 0 2px 0;
+    opacity: 0.75;
   }
 
-  /* Bottom area: side panel takes all remaining space and scrolls */
+  .track-container {
+    flex: 1;
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: visible;
+  }
+
+  .track-container svg {
+    width: 100%;
+    height: 100%;
+    max-width: 95%;
+    max-height: 95%;
+    filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.5));
+    object-fit: contain;
+    transform: none;
+  }
+
   #side-panel {
     width: 100%;
     border-left: none;
-    border-top: 2px solid var(--border-color);
+    border-top: 1px solid var(--border-color);
     flex: 1;
-    min-height: 0; /* critical: allows flex child to shrink below content size */
-    overflow: hidden; /* contain the scroll within */
+    min-height: 0;
+    overflow: hidden;
+    box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.2);
+  }
+
+  #side-panel::before {
+    display: none;
+  }
+
+  body.light-mode #side-panel {
+    box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.04);
   }
 
   #telemetry-section {
-    padding: 10px 16px;
+    padding: 4px 14px 10px 14px;
     height: auto;
-    min-height: 50px;
+    min-height: 46px;
     flex-direction: column;
-    gap: 8px;
+    gap: 6px;
+    flex-shrink: 0;
+    background: transparent;
   }
 
-  /* Controls bar repositioned to top on mobile */
   #bottom-left-controls {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    padding: 10px 16px !important;
-    border-top: none !important;
-    background: transparent !important;
-    justify-content: space-between !important;
-    z-index: 100;
-    pointer-events: none; /* Let clicks pass through empty space */
+    position: static;
+    padding: 10px 16px;
+    border-top: 1px solid var(--border-color);
+    background-color: var(--bg-panel);
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 12px;
+    flex-shrink: 0;
+    z-index: 2;
   }
 
-  #bottom-left-controls > * {
-    pointer-events: auto; /* Re-enable clicks for toggles */
+  .control-icon-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-md);
+    background-color: var(--btn-bg);
+    border: 1px solid var(--border-color);
+    box-shadow: none;
+  }
+
+  body.light-mode .control-icon-btn {
+    background-color: var(--btn-bg);
+    border-color: var(--border-color);
+    box-shadow: none;
+  }
+
+  #settings-toggle {
+    margin-left: 0;
+  }
+
+  #help-toggle {
+    display: flex !important;
+    margin-left: auto !important;
+  }
+}
+
+/* ═══════════════════════════════════════════════
+   SMALL MOBILE (< 380px)
+   ═══════════════════════════════════════════════ */
+@media (max-width: 380px) {
+  #game-title {
+    top: 10px;
+    font-size: 18px;
+    letter-spacing: 5px;
+  }
+
+  #track-section {
+    padding-top: 40px;
+  }
+
+  #main-view {
+    height: clamp(260px, 42dvh, 48dvh);
+  }
+}
+
+/* ═══════════════════════════════════════════════
+   TALL DESKTOP (> 900px height)
+   ═══════════════════════════════════════════════ */
+@media (min-height: 900px) and (min-width: 769px) {
+  #telemetry-section {
+    height: 120px;
+    min-height: 120px;
   }
 }

@@ -4,8 +4,9 @@ export const UPGRADES_CONFIG = {
     name: "Engine",
     baseCost: 200,
     growthRate: 1.10,
-    type: "per-car", // Engine/Aero/Tyres are per car
+    type: "per-car",
     description: "Improves straight-line speed.",
+    maxLevel: 50,
   },
   aero: {
     id: "aero",
@@ -14,6 +15,7 @@ export const UPGRADES_CONFIG = {
     growthRate: 1.10,
     type: "per-car",
     description: "Improves cornering speed.",
+    maxLevel: 50,
   },
   tyre: {
     id: "tyre",
@@ -22,14 +24,16 @@ export const UPGRADES_CONFIG = {
     growthRate: 1.10,
     type: "per-car",
     description: "Improves overall grip and acceleration.",
+    maxLevel: 50,
   },
   pitCrew: {
     id: "pitCrew",
     name: "Pit Crew",
     baseCost: 500,
     growthRate: 1.25,
-    type: "global", // Pit Crew and Driver are global
+    type: "global",
     description: "Reduces pit stop duration.",
+    maxLevel: 25,
   },
   driver: {
     id: "driver",
@@ -38,6 +42,7 @@ export const UPGRADES_CONFIG = {
     growthRate: 1.2,
     type: "global",
     description: "Improves lap time consistency.",
+    maxLevel: 25,
   },
   sponsorships: {
     id: "sponsorships",
@@ -46,6 +51,7 @@ export const UPGRADES_CONFIG = {
     growthRate: 1.25,
     type: "global",
     description: "Increases credits earned per lap.",
+    maxLevel: 25,
   },
 };
 

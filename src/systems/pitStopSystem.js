@@ -1,54 +1,80 @@
 import { EventBus } from "../utils/eventBus.js";
+import { AudioEngine } from "../audio/audioManager.js";
 
 let state;
 
 export function initPitStopSystem(gameState) {
   state = gameState;
 
-  // Check for pit stop when a lap starts
   EventBus.on("lap:started", () => {
-    // 15% chance to need a pit stop on this lap
-    if (Math.random() < 0.15) {
-      // Schedule the pit stop for near the end of the lap
-      state.runtime.pitStopScheduled = true;
-      state.runtime.pitStopTriggered = false;
-    } else {
-      state.runtime.pitStopScheduled = false;
-      state.runtime.pitStopTriggered = false;
+    const trackId = state.session.currentTrackId;
+    let numStops = 1;
+    if (trackId === "karting") numStops = 1;
+    else if (["buddh", "monza"].includes(trackId)) numStops = 2;
+    else if (["silverstone", "spa"].includes(trackId)) numStops = 3;
+    else if (trackId === "monaco") numStops = 4;
+
+    state.runtime.pitStopsScheduled = [];
+    state.runtime.pitRadioAlertSent = false;
+    if (numStops > 0) {
+      let attempts = 0;
+      while (state.runtime.pitStopsScheduled.length < numStops && attempts < 100) {
+        attempts++;
+        // Keep candidate between 18% and 72% so at least 28% of lap remains after the last stop
+        const candidate = 0.18 + Math.random() * 0.54;
+        
+        // Ensure it is at least 22% away from any other scheduled stop
+        let isValid = true;
+        for (const existing of state.runtime.pitStopsScheduled) {
+          if (Math.abs(existing - candidate) < 0.22) {
+            isValid = false;
+            break;
+          }
+        }
+        
+        if (isValid) {
+          state.runtime.pitStopsScheduled.push(candidate);
+        }
+      }
+      // Sort them chronologically
+      state.runtime.pitStopsScheduled.sort((a, b) => a - b);
     }
   });
 }
 
 export function triggerPitStop() {
   state.runtime.pitStopActive = true;
-  state.runtime.pitStopScheduled = false;
-  state.runtime.pitStopTriggered = true;
-
-  // Pause the lap timer visually and logically
   EventBus.emit("pitstop:active");
 }
 
 export function resolvePitStop(quality) {
-  state.runtime.pitStopActive = false;
+  // Keep pitStopActive = true while pit exit animation & tire change plays
   state.runtime.lastPitStopQuality = quality;
 
-  const pitCrewLevel = state.team.pitCrewLevel;
+  const pitCrewLevel = state.team.pitCrewLevel || 0;
+  // Pit crew gives flat 150ms reduction per level per stop
+  const reduction = pitCrewLevel * 150;
 
-  // Base penalty in milliseconds
-  let penalty = 3000;
-
+  let modifier = 0;
   if (quality === "PERFECT") {
-    penalty = 500;
-  } else if (quality === "GOOD") {
-    penalty = 1500;
+    modifier = -0.12;
+  } else if (quality === "BAD") {
+    modifier = 0.15;
   }
 
-  // Pit crew reduces penalty by 5% per level, up to 75% max
-  const reduction = Math.min(0.75, pitCrewLevel * 0.05);
-  const finalPenalty = penalty * (1 - reduction);
+  const baseDuration = state.runtime.baseLapDurationMs || state.runtime.expectedLapDurationMs;
+  const timeChange = (state.runtime.expectedLapDurationMs * modifier) - reduction;
+  
+  // Safe floor: Never reduce expected lap duration below 65% of the base lap duration or 1800ms
+  const safeFloorMs = Math.max(1800, baseDuration * 0.65);
+  state.runtime.expectedLapDurationMs = Math.max(safeFloorMs, state.runtime.expectedLapDurationMs + timeChange);
 
-  // Add the penalty to the expected lap duration
-  state.runtime.expectedLapDurationMs += finalPenalty;
+  EventBus.emit("pitstop:resolved", { quality, timeChange });
+}
 
-  EventBus.emit("pitstop:resolved", { quality, penalty: finalPenalty });
+export function completePitStopExit() {
+  if (!state.runtime.pitStopActive) return;
+  state.runtime.pitStopActive = false;
+  AudioEngine.start();
+  EventBus.emit("pitstop:exit_completed");
 }

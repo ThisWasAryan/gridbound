@@ -6,6 +6,7 @@ let containerElement;
 let trackElement;
 let racelinePath;
 let carGroup;
+let prevAngle = null;
 
 let stateRef;
 
@@ -40,6 +41,7 @@ export async function initTrackView(container, state) {
   // Listen to lap progress
   EventBus.on("lap:progress", handleLapProgress);
   EventBus.on("lap:completed", handleLapCompleted);
+  EventBus.on("lap:aborted", handleLapCompleted);
   EventBus.on("track:switched", handleTrackSwitched);
   EventBus.on("car:switched", handleCarSwitched);
 }
@@ -58,6 +60,16 @@ function handleCarSwitched() {
   );
 }
 
+const svgCache = {};
+
+async function fetchSvg(path) {
+  if (svgCache[path]) return svgCache[path];
+  const res = await fetch(path);
+  const text = await res.text();
+  svgCache[path] = text;
+  return text;
+}
+
 /**
  * Loads the track and car SVGs and sets up references.
  */
@@ -65,50 +77,47 @@ async function loadTrackAndCar(trackId, carId) {
   const trackDef = TRACKS_CONFIG[trackId];
   const carDef = CARS_CONFIG[carId];
 
-  // Load track SVG (simulate fetching)
-  // For local static, we can fetch the SVG text and inject it so we can access paths.
+  // Show loading skeleton for track
+  trackElement.innerHTML = `
+      <div style="display:flex; justify-content:center; align-items:center; height:100%; opacity:0.5; min-height: 200px;">
+          <div style="width: 40px; height: 40px; border: 4px solid var(--text-muted); border-top-color: var(--accent-primary); border-radius: 50%; animation: spin 1s linear infinite;"></div>
+      </div>
+      <style>@keyframes spin { to { transform: rotate(360deg); } }</style>
+  `;
+
+  // Load track SVG
   try {
-    const trackRes = await fetch(trackDef.svgPath);
-    const trackSvg = await trackRes.text();
+    const trackSvg = await fetchSvg(trackDef.svgPath);
     trackElement.innerHTML = trackSvg;
 
     // Find raceline
     racelinePath = trackElement.querySelector("#raceline");
+    computeTrackCurvatureMap();
 
     // Load Car SVG
-    const carRes = await fetch(carDef.svgPath);
-    const carSvgText = await carRes.text();
+    const carSvgText = await fetchSvg(carDef.svgPath);
 
     // Create a group for the car to move along the track
     carGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
     carGroup.id = "active-car";
     carGroup.innerHTML = carSvgText;
 
-    // Offset the nested SVG to center it correctly on the path
+    // Offset and scale the nested SVG to center it precisely on the raceline
     const innerSvg = carGroup.querySelector("svg");
     if (innerSvg) {
-      const width = parseFloat(innerSvg.getAttribute("width") || "30");
-      const height = parseFloat(innerSvg.getAttribute("height") || "30");
-      innerSvg.setAttribute("x", -width / 2);
-      innerSvg.setAttribute("y", -height / 2);
+      // Scale car to fit naturally within race ribbon (~26-30px length, ~13-15px width)
+      const baseW = parseFloat(innerSvg.getAttribute("width") || "30");
+      const baseH = parseFloat(innerSvg.getAttribute("height") || "15");
+      const targetW = 28;
+      const targetH = Math.round(targetW * (baseH / baseW));
+      innerSvg.setAttribute("width", targetW);
+      innerSvg.setAttribute("height", targetH);
+      innerSvg.setAttribute("x", -targetW / 2);
+      innerSvg.setAttribute("y", -targetH / 2);
     }
 
     // Append car to the track SVG
     const svgElement = trackElement.querySelector("svg");
-    
-    // Add start grid indicator if raceline exists
-    if (racelinePath) {
-        const startPoint = racelinePath.getPointAtLength(0);
-        const startIndicator = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-        startIndicator.setAttribute("cx", startPoint.x);
-        startIndicator.setAttribute("cy", startPoint.y);
-        startIndicator.setAttribute("r", 8);
-        startIndicator.setAttribute("fill", "#00ffaa");
-        startIndicator.setAttribute("stroke", "#14161b");
-        startIndicator.setAttribute("stroke-width", 2);
-        svgElement.appendChild(startIndicator);
-    }
-    
     svgElement.appendChild(carGroup);
     
     // Update track name
@@ -121,6 +130,40 @@ async function loadTrackAndCar(trackId, carId) {
     updateCarPosition(0);
   } catch (e) {
     console.error("Failed to load SVGs:", e);
+  }
+}
+
+let timeNodes = [0];
+let distNodes = [0];
+
+function computeTrackCurvatureMap() {
+  if (!racelinePath) return;
+  const numSamples = 200;
+  const length = racelinePath.getTotalLength();
+  timeNodes = [0];
+  distNodes = [0];
+  let totalT = 0;
+
+  for (let i = 1; i <= numSamples; i++) {
+    const dist = (i / numSamples) * length;
+    const p0 = racelinePath.getPointAtLength(Math.max(0, dist - 5));
+    const p1 = racelinePath.getPointAtLength(dist);
+    const p2 = racelinePath.getPointAtLength(Math.min(length, dist + 5));
+
+    const a1 = Math.atan2(p1.y - p0.y, p1.x - p0.x);
+    const a2 = Math.atan2(p2.y - p1.y, p2.x - p1.x);
+    let diff = Math.abs(a2 - a1);
+    if (diff > Math.PI) diff = 2 * Math.PI - diff;
+
+    const speed = 1 / (1 + diff * 12);
+    const timeSpent = 1 / speed;
+    totalT += timeSpent;
+    timeNodes.push(totalT);
+    distNodes.push(i / numSamples);
+  }
+
+  for (let i = 0; i < timeNodes.length; i++) {
+    timeNodes[i] /= totalT;
   }
 }
 
@@ -140,37 +183,30 @@ function updateCarPosition(progress) {
   if (!racelinePath || !carGroup) return;
 
   const length = racelinePath.getTotalLength();
-  // Wrap around gracefully just in case it hits > 1
-  const p = Math.max(0, Math.min(1, progress));
+  const pClamped = Math.max(0, Math.min(1, progress));
 
-  const point = racelinePath.getPointAtLength(length * p);
-
-  // Calculate rotation using a point slightly ahead
-  const delta = 0.5; // pixels
-  let nextPoint = racelinePath.getPointAtLength(
-    Math.min(length, length * p + delta),
-  );
-
-  // Handle edge case at exactly 1.0 (end of path)
-  if (length * p + delta > length) {
-    // Look backwards to calculate slope instead
-    const prevPoint = racelinePath.getPointAtLength(length * p - delta);
-    nextPoint = point;
-    const angle =
-      (Math.atan2(nextPoint.y - prevPoint.y, nextPoint.x - prevPoint.x) * 180) /
-      Math.PI;
-    carGroup.setAttribute(
-      "transform",
-      `translate(${point.x}, ${point.y}) rotate(${angle})`,
-    );
-    return;
+  let distProgress = pClamped;
+  if (timeNodes.length > 1) {
+    for (let i = 0; i < timeNodes.length - 1; i++) {
+      if (pClamped >= timeNodes[i] && pClamped <= timeNodes[i + 1]) {
+        const tRatio = (pClamped - timeNodes[i]) / (timeNodes[i + 1] - timeNodes[i]);
+        distProgress = distNodes[i] + tRatio * (distNodes[i + 1] - distNodes[i]);
+        break;
+      }
+    }
   }
 
-  const angle =
-    (Math.atan2(nextPoint.y - point.y, nextPoint.x - point.x) * 180) / Math.PI;
+  const p = Math.max(0, Math.min(1, distProgress));
+  const point = racelinePath.getPointAtLength(length * p);
+
+  const delta = 1.5;
+  const currentDist = length * p;
+  const pA = racelinePath.getPointAtLength(Math.max(0, currentDist - delta));
+  const pB = racelinePath.getPointAtLength(Math.min(length, currentDist + delta));
+  const angle = (Math.atan2(pB.y - pA.y, pB.x - pA.x) * 180) / Math.PI;
 
   carGroup.setAttribute(
     "transform",
-    `translate(${point.x}, ${point.y}) rotate(${angle})`,
+    `translate(${point.x}, ${point.y}) rotate(${angle})`
   );
 }

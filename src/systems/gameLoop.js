@@ -4,10 +4,11 @@ import { EventBus } from "../utils/eventBus.js";
 import { saveGame } from "../state/saveLoad.js";
 import { calculateLapDurationMs } from "./lapSystem.js";
 import { triggerPitStop } from "./pitStopSystem.js";
+import { AudioEngine } from "../audio/audioManager.js";
 
 let lastTimestamp = 0;
-let accumulatedMs = 0;
 let rafId = null;
+let logicIntervalId = null;
 
 // The game state reference injected on boot
 let state;
@@ -15,6 +16,19 @@ let state;
 /**
  * Starts a manual lap.
  */
+
+/**
+ * Aborts the current lap manually.
+ */
+export function abortLap() {
+  if (!state.runtime.lapActive) return;
+  state.runtime.lapActive = false;
+  state.runtime.lapProgress = 0;
+  state.runtime.pitStopActive = false;
+  AudioEngine.stop();
+  EventBus.emit("lap:aborted");
+}
+
 export function startManualLap() {
   if (state.runtime.lapActive) return;
 
@@ -22,9 +36,12 @@ export function startManualLap() {
 
   state.runtime.lapActive = true;
   state.runtime.lapStartTime = performance.now();
+  state.runtime.baseLapDurationMs = expectedDurationMs;
   state.runtime.expectedLapDurationMs = expectedDurationMs;
   state.runtime.lapProgress = 0;
+  state.runtime.pitRadioAlertSent = false;
 
+  AudioEngine.start();
   EventBus.emit("lap:started", { expectedDurationMs });
 }
 
@@ -34,6 +51,7 @@ export function startManualLap() {
 function completeLap() {
   state.runtime.lapActive = false;
   state.runtime.lapProgress = 1;
+  AudioEngine.stop();
 
   const trackDef = TRACKS_CONFIG[state.session.currentTrackId];
   const sponsorshipMultiplier = 1 + (state.team.sponsorshipsLevel || 0) * 0.25;
@@ -51,7 +69,7 @@ function completeLap() {
       pitColor = "#ffb020"; // Gold
     } else if (state.runtime.lastPitStopQuality === "GOOD") {
       pitMultiplier = 2;
-      pitColor = "#38bdf8"; // Blue
+      pitColor = "#a855f7"; // F1 Purple (No Blue)
     } else if (state.runtime.lastPitStopQuality === "BAD") {
       pitMultiplier = 0;
       pitColor = "#e63946"; // Red
@@ -92,7 +110,8 @@ function completeLap() {
  */
 function rafLoop(timestampMs) {
   if (!lastTimestamp) lastTimestamp = timestampMs;
-  const dt = timestampMs - lastTimestamp;
+  let dt = timestampMs - lastTimestamp;
+  dt = Math.min(dt, 100); // Cap at 100ms to prevent tab-switch exploits
   lastTimestamp = timestampMs;
 
   // 1. Continuous Animation Update (Lap Progress)
@@ -103,30 +122,39 @@ function rafLoop(timestampMs) {
       elapsed / state.runtime.expectedLapDurationMs,
     );
 
+    AudioEngine.setRPM(state.runtime.lapProgress);
     EventBus.emit("lap:progress", { progress: state.runtime.lapProgress });
 
     if (
-      state.runtime.pitStopScheduled &&
-      !state.runtime.pitStopTriggered &&
-      state.runtime.lapProgress >= 0.9
+      state.runtime.pitStopsScheduled &&
+      state.runtime.pitStopsScheduled.length > 0
     ) {
-      triggerPitStop();
-      // Reset lapStartTime so it pauses visually
-      state.runtime.lapStartTime =
-        timestampMs - state.runtime.expectedLapDurationMs * 0.9;
-    } else if (state.runtime.lapProgress >= 1) {
+      const nextPitStopAt = state.runtime.pitStopsScheduled[0];
+      const timeRemainingMs = (nextPitStopAt - state.runtime.lapProgress) * state.runtime.expectedLapDurationMs;
+
+      // 2.5s before pit stop: fire radio alert once per stop
+      if (timeRemainingMs <= 2500 && timeRemainingMs > 0 && !state.runtime.pitRadioAlertSent) {
+        state.runtime.pitRadioAlertSent = true;
+        EventBus.emit("pitstop:radio_alert", { timeRemainingMs });
+      }
+
+      if (state.runtime.lapProgress >= nextPitStopAt) {
+        state.runtime.pitStopsScheduled.shift();
+        state.runtime.pitRadioAlertSent = false;
+        AudioEngine.stop();
+        triggerPitStop();
+        // Pause visually right at the pit stop point
+        state.runtime.lapStartTime =
+          timestampMs - state.runtime.expectedLapDurationMs * nextPitStopAt;
+      }
+    }
+    
+    if (state.runtime.lapProgress >= 1 && !state.runtime.pitStopActive) {
       completeLap();
     }
   } else if (state.runtime.pitStopActive) {
     // Shift start time forward to pause progress
     state.runtime.lapStartTime += dt;
-  }
-
-  // 2. Coarse Simulation Tick
-  accumulatedMs += dt;
-  if (accumulatedMs >= CONSTANTS.TICK_INTERVAL_MS) {
-    simulationTick(accumulatedMs);
-    accumulatedMs = 0;
   }
 
   rafId = requestAnimationFrame(rafLoop);
@@ -136,8 +164,6 @@ function rafLoop(timestampMs) {
  * Periodic logic for automation and autosave.
  */
 function simulationTick(dt) {
-  // Phase 9+ will put automation logic here.
-  // For now, it's just a placeholder tick.
   EventBus.emit("simulation:tick", { dt });
 }
 
@@ -151,13 +177,27 @@ export function startGameLoop(gameState) {
   state.runtime = {
     lapActive: false,
     lapStartTime: 0,
+    baseLapDurationMs: 0,
     expectedLapDurationMs: 0,
     lapProgress: 0,
     pitStopActive: false,
-    pitStopScheduled: false,
-    pitStopTriggered: false,
+    pitRadioAlertSent: false,
+    pitStopsScheduled: [],
   };
+
+  EventBus.on("pitstop:exit_completed", () => {
+    // Only re-anchor and resume progress after the pit exit animation finishes
+    const now = performance.now();
+    // Clamp progress so pit stop can never immediately terminate the lap
+    state.runtime.lapProgress = Math.min(0.88, state.runtime.lapProgress);
+    state.runtime.lapStartTime = now - (state.runtime.lapProgress * state.runtime.expectedLapDurationMs);
+  });
 
   lastTimestamp = performance.now();
   rafId = requestAnimationFrame(rafLoop);
+
+  if (logicIntervalId) clearInterval(logicIntervalId);
+  logicIntervalId = setInterval(() => {
+    simulationTick(CONSTANTS.TICK_INTERVAL_MS);
+  }, CONSTANTS.TICK_INTERVAL_MS);
 }

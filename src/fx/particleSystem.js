@@ -1,7 +1,18 @@
 let canvas = null;
 let ctx = null;
-let allParticles = [];
 let isAnimating = false;
+
+const MAX_PARTICLES = 500;
+const pool = Array.from({ length: MAX_PARTICLES }, () => ({
+  x: 0, y: 0, vx: 0, vy: 0, life: 0, color: "", size: 0, active: false
+}));
+
+function getFreeParticle() {
+  for (let i = 0; i < pool.length; i++) {
+    if (!pool[i].active) return pool[i];
+  }
+  return pool[0];
+}
 
 function ensureCanvas() {
   if (canvas) return;
@@ -34,17 +45,17 @@ export function createParticleBurst(
   ensureCanvas();
 
   for (let i = 0; i < count; i++) {
+    const p = getFreeParticle();
     const angle = (Math.PI * 2 * i) / count + (Math.random() - 0.5) * 0.5;
     const speed = 2 + Math.random() * 6;
-    allParticles.push({
-      x,
-      y,
-      vx: Math.cos(angle) * speed,
-      vy: Math.sin(angle) * speed - 2,
-      life: 1.0,
-      color: colors[Math.floor(Math.random() * colors.length)],
-      size: Math.random() * 4 + 2,
-    });
+    p.x = x;
+    p.y = y;
+    p.vx = Math.cos(angle) * speed;
+    p.vy = Math.sin(angle) * speed - 2;
+    p.life = 1.0;
+    p.color = colors[Math.floor(Math.random() * colors.length)];
+    p.size = Math.random() * 4 + 2;
+    p.active = true;
   }
 
   if (!isAnimating) {
@@ -67,17 +78,23 @@ function update(time) {
   ctx.restore();
 
   // Update and draw all particles
-  for (let i = allParticles.length - 1; i >= 0; i--) {
-    const p = allParticles[i];
+  let activeCount = 0;
+
+  for (let i = 0; i < pool.length; i++) {
+    const p = pool[i];
+    if (!p.active) continue;
+
     p.x += p.vx * dt;
     p.y += p.vy * dt;
     p.vy += 0.15 * dt; // gravity
     p.life -= 0.018 * dt;
 
     if (p.life <= 0) {
-      allParticles.splice(i, 1);
+      p.active = false;
       continue;
     }
+
+    activeCount++;
 
     ctx.globalAlpha = Math.max(0, p.life);
     ctx.fillStyle = p.color;
@@ -88,7 +105,7 @@ function update(time) {
 
   ctx.globalAlpha = 1;
 
-  if (allParticles.length > 0) {
+  if (activeCount > 0) {
     requestAnimationFrame(update);
   } else {
     isAnimating = false;

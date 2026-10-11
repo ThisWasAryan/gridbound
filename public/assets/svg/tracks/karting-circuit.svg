@@ -1,0 +1,83 @@
+<svg viewBox="120 70 760 460" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <filter id="track-shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="10" stdDeviation="16" flood-color="#000000" flood-opacity="0.9"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1000" height="600" fill="none" />
+  
+  <!-- Track Road Outer Edge / Kerb Outline -->
+  <path id="track-edge" 
+        d="M 500,500 L 800,500 A 50 50 0 0 0 850,450 L 850,150 A 50 50 0 0 0 800,100 L 200,100 A 50 50 0 0 0 150,150 L 150,450 A 50 50 0 0 0 200,500 Z" 
+        fill="none" 
+        stroke="var(--track-road-edge, rgba(255, 255, 255, 0.36))" 
+        stroke-width="56" 
+        stroke-linejoin="round" 
+        stroke-linecap="round"
+        filter="url(#track-shadow)"/>
+
+  <!-- Main Tarmac Surface (Wide, Prominent Asphalt Road) -->
+  <path id="track-tarmac" 
+        d="M 500,500 L 800,500 A 50 50 0 0 0 850,450 L 850,150 A 50 50 0 0 0 800,100 L 200,100 A 50 50 0 0 0 150,150 L 150,450 A 50 50 0 0 0 200,500 Z" 
+        fill="none" 
+        stroke="var(--track-road, #282b35)" 
+        stroke-width="46" 
+        stroke-linejoin="round" 
+        stroke-linecap="round"/>
+
+  <!-- The main raceline groove that the car follows -->
+  <path id="raceline" 
+        d="M 500,500 L 800,500 A 50 50 0 0 0 850,450 L 850,150 A 50 50 0 0 0 800,100 L 200,100 A 50 50 0 0 0 150,150 L 150,450 A 50 50 0 0 0 200,500 Z" 
+        fill="none" 
+        stroke="var(--track-raceline, #3d4253)" 
+        stroke-width="28" 
+        stroke-linejoin="round" 
+        stroke-linecap="round"
+        data-sectors="0,0.33,0.66,1.0"/>
+  
+  <!-- Sector 1: Red (#ff2d55) -->
+  <path data-sector="1" 
+        d="M 500,500 L 800,500 A 50 50 0 0 0 850,450 L 850,300" 
+        fill="none" 
+        stroke="#ff2d55" 
+        stroke-width="5" 
+        stroke-linecap="round"
+        stroke-opacity="0.95"/>
+  
+  <!-- Sector 2: Emerald Green (#00e68a) -->
+  <path data-sector="2" 
+        d="M 850,300 L 850,150 A 50 50 0 0 0 800,100 L 200,100 A 50 50 0 0 0 150,150 L 150,300" 
+        fill="none" 
+        stroke="#00e68a" 
+        stroke-width="5" 
+        stroke-linecap="round"
+        stroke-opacity="0.95"/>
+  
+  <!-- Sector 3: F1 Purple (#a855f7) - Replaced Blue (#3333FF) -->
+  <path data-sector="3" 
+        d="M 150,300 L 150,450 A 50 50 0 0 0 200,500 L 500,500" 
+        fill="none" 
+        stroke="#a855f7" 
+        stroke-width="5" 
+        stroke-linecap="round"
+        stroke-opacity="0.95"/>
+  
+  <!-- Sector 1→2 boundary marker -->
+  <line class="sector-marker" 
+        data-sector-boundary="1-2"
+        x1="820" y1="300" 
+        x2="880" y2="300" 
+        stroke="#FFFFFF" stroke-width="2.5" stroke-dasharray="4,4"/>
+  
+  <!-- Sector 2→3 boundary marker -->
+  <line class="sector-marker" 
+        data-sector-boundary="2-3"
+        x1="120" y1="300" 
+        x2="180" y2="300" 
+        stroke="#FFFFFF" stroke-width="2.5" stroke-dasharray="4,4"/>
+        
+  <!-- Start/Finish line -->
+  <line id="start-finish" x1="500" y1="472" x2="500" y2="528" stroke="#ffffff" stroke-width="6" stroke-dasharray="6,6" />
+</svg>

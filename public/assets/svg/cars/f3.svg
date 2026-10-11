@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-25 -15 50 30" width="34" height="17">
+    <g transform="rotate(90)">
+        <!-- Tyres with grooves -->
+        <rect x="-10" y="-15" width="4.5" height="8.5" rx="1" fill="#14161b" stroke="#8a8f9a" stroke-width="0.5"/>
+        <line x1="-10" y1="-13" x2="-5.5" y2="-13" stroke="#242933" stroke-width="0.5"/>
+        <line x1="-10" y1="-11" x2="-5.5" y2="-11" stroke="#242933" stroke-width="0.5"/>
+        <line x1="-10" y1="-9" x2="-5.5" y2="-9" stroke="#242933" stroke-width="0.5"/>
+
+        <rect x="5.5" y="-15" width="4.5" height="8.5" rx="1" fill="#14161b" stroke="#8a8f9a" stroke-width="0.5"/>
+        <line x1="5.5" y1="-13" x2="10" y2="-13" stroke="#242933" stroke-width="0.5"/>
+        <line x1="5.5" y1="-11" x2="10" y2="-11" stroke="#242933" stroke-width="0.5"/>
+        <line x1="5.5" y1="-9" x2="10" y2="-9" stroke="#242933" stroke-width="0.5"/>
+
+        <rect x="-11" y="9" width="5.5" height="10" rx="1.5" fill="#14161b" stroke="#8a8f9a" stroke-width="0.5"/>
+        <line x1="-11" y1="11" x2="-5.5" y2="11" stroke="#242933" stroke-width="0.5"/>
+        <line x1="-11" y1="14" x2="-5.5" y2="14" stroke="#242933" stroke-width="0.5"/>
+        <line x1="-11" y1="17" x2="-5.5" y2="17" stroke="#242933" stroke-width="0.5"/>
+
+        <rect x="5.5" y="9" width="5.5" height="10" rx="1.5" fill="#14161b" stroke="#8a8f9a" stroke-width="0.5"/>
+        <line x1="5.5" y1="11" x2="11" y2="11" stroke="#242933" stroke-width="0.5"/>
+        <line x1="5.5" y1="14" x2="11" y2="14" stroke="#242933" stroke-width="0.5"/>
+        <line x1="5.5" y1="17" x2="11" y2="17" stroke="#242933" stroke-width="0.5"/>
+        
+        <!-- Front Wing -->
+        <path d="M -10 -19 L 10 -19 L 8 -16 L -8 -16 Z" fill="#242933" stroke="#ff2d55" stroke-width="1.5"/>
+        <path d="M -9 -19 L -9 -16 M 9 -19 L 9 -16" stroke="#242933" stroke-width="1"/>
+        
+        <!-- Main Body -->
+        <path d="M -2 -16 L 2 -16 L 5 4 L 4 14 L -4 14 L -5 4 Z" fill="#1d2129" stroke="#e7e9ee" stroke-width="1.5"/>
+        
+        <!-- Intake/Engine Cover detail -->
+        <path d="M -2.5 5 L 2.5 5 L 3.5 12 L -3.5 12 Z" fill="#242933" stroke="#8a8f9a" stroke-width="1"/>
+        
+        <!-- Rear Wing -->
+        <path d="M -9 15 L 9 15 L 9 18 L -9 18 Z" fill="#242933" stroke="#ff2d55" stroke-width="1.5"/>
+        
+        <!-- Cockpit -->
+        <path d="M -2 -1 C -2 4, 2 4, 2 -1 Z" fill="#14161b" stroke="#e7e9ee" stroke-width="1"/>
+        
+        <!-- Driver Helmet -->
+        <circle cx="0" cy="1" r="1.5" fill="#e10600" />
+        
+        <!-- Halo -->
+        <path d="M -2.5 -1 C -2.5 -4, 2.5 -4, 2.5 -1" fill="none" stroke="#e7e9ee" stroke-width="1"/>
+        <line x1="0" y1="-4" x2="0" y2="-1" stroke="#e7e9ee" stroke-width="1"/>
+    </g>
+</svg>

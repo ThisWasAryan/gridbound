@@ -9,6 +9,7 @@ let telemetryContainer;
 let lapTimeDisplay;
 let creditsDisplay;
 let startButton;
+let abortButton;
 
 let currentLapStartMs = 0;
 let isLapping = false;
@@ -30,7 +31,9 @@ export function initTelemetryView(container, state) {
                     <span class="value monospace" id="lap-time-readout">--:--.---</span>
                 </div>
             </div>
-            <button id="start-lap-btn" class="primary-btn">START LAP</button>
+            <div class="telemetry-action">
+                <button id="start-lap-btn" class="primary-btn">START LAP</button>
+            </div>
         </div>
     `;
 
@@ -69,7 +72,10 @@ function handleLapStarted({ expectedDurationMs }) {
 function handleLapProgress({ progress }) {
   if (!isLapping) return;
   const elapsed = performance.now() - currentLapStartMs;
-  lapTimeDisplay.textContent = formatTime(elapsed);
+  const newText = formatTime(elapsed);
+  if (lapTimeDisplay.textContent !== newText) {
+    lapTimeDisplay.textContent = newText;
+  }
 }
 
 function handleLapCompleted({ lapTimeMs, profit, isPersonalBest, pitMultiplier, pitColor }) {
@@ -117,4 +123,8 @@ function handleLapCompleted({ lapTimeMs, profit, isPersonalBest, pitMultiplier, 
 
 function handleCreditsChanged({ total }) {
   creditsDisplay.textContent = formatCredits(total);
+  creditsDisplay.classList.remove("credits-glow");
+  void creditsDisplay.offsetWidth; // Force DOM reflow to restart CSS animation
+  creditsDisplay.classList.add("credits-glow");
+  setTimeout(() => creditsDisplay.classList.remove("credits-glow"), 400);
 }
