@@ -40,7 +40,22 @@
 }
 
 body.light-mode .shop-tabs {
-  background-color: rgba(15, 23, 42, 0.04);
+  background-color: #f3f4f6;
+  border-color: #e5e7eb;
+}
+
+body.light-mode .tab-btn {
+  color: #4b5563;
+}
+
+body.light-mode .tab-btn:hover {
+  color: #1d2129;
+  background-color: #e5e7eb;
+}
+
+body.light-mode .tab-btn.active {
+  background: var(--accent-primary);
+  color: #ffffff;
 }
 
 .tab-btn {
@@ -270,8 +285,9 @@ body.light-mode #shop-content-area::-webkit-scrollbar-thumb {
 }
 
 body.light-mode .buy-btn.disabled {
-  background: rgba(15, 23, 42, 0.03);
-  border-color: rgba(15, 23, 42, 0.06);
+  background: #f3f4f6;
+  border-color: #e5e7eb;
+  color: #6b7280;
 }
 
 /* Switch Button (DRIVE / ACTIVATE) */
@@ -291,14 +307,15 @@ body.light-mode .buy-btn.disabled {
 }
 
 body.light-mode .buy-btn.switch-btn {
-  background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%);
-  border-color: rgba(15, 23, 42, 0.12);
-  color: var(--text-primary);
+  background: #e5e7eb;
+  border-color: #d1d5db;
+  color: #1d2129;
 }
 
 body.light-mode .buy-btn.switch-btn:hover {
-  background: linear-gradient(135deg, #cbd5e1 0%, #94a3b8 100%);
-  border-color: rgba(15, 23, 42, 0.25);
+  background: #d1d5db;
+  border-color: #9ca3af;
+  color: #1d2129;
 }
 
 /* Automation inline toggle button */

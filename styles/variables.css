@@ -132,61 +132,64 @@
    LIGHT MODE
    ═══════════════════════════════════════════════════════ */
 body.light-mode {
-  --bg-void: #f2f4f7;
+  /* Beloved original off-white palette */
+  --bg-void: #f0f2f5;
   --bg-panel: #ffffff;
-  --bg-surface: #f7f9fb;
-  --bg-surface-hover: #eceef2;
-  --bg-surface-active: #dfe2e8;
+  --bg-surface: #f3f4f6;
+  --bg-surface-hover: #e5e7eb;
+  --bg-surface-active: #d1d5db;
 
-  --text-primary: #11141a;
-  --text-data: #11141a;
-  --text-secondary: #606775;
-  --text-muted: #9299a8;
+  /* High-contrast crisp dark text for perfect legibility */
+  --text-primary: #1d2129;
+  --text-data: #14161b;
+  --text-secondary: #4b5563;
+  --text-muted: #6b7280;
 
-  --border-color: rgba(17, 20, 26, 0.08);
-  --border-subtle: rgba(17, 20, 26, 0.04);
-  --border-hover: rgba(17, 20, 26, 0.15);
+  --border-color: #e5e7eb;
+  --border-subtle: #f0f2f5;
+  --border-hover: #d1d5db;
 
-  --track-bg: #f2f4f7;
-  --track-road: #e2e5ec;
-  --track-road-edge: rgba(17, 20, 26, 0.14);
-  --track-raceline: rgba(17, 20, 26, 0.25);
+  /* Clean off-white track presentation with dark crisp tarmac */
+  --track-bg: #f8fafc;
+  --track-road: #222631;
+  --track-road-edge: rgba(0, 0, 0, 0.22);
+  --track-raceline: rgba(255, 255, 255, 0.22);
 
-  --accent-primary: #e11d48;
-  --accent-primary-hover: #be123c;
+  --accent-primary: #C80500;
+  --accent-primary-hover: #b00400;
   --accent-primary-glow: transparent;
-  --accent-primary-subtle: rgba(225, 29, 72, 0.08);
+  --accent-primary-subtle: rgba(200, 5, 0, 0.08);
 
-  --accent-sector: #9333ea;
+  --accent-sector: #8234e8;
   --accent-sector-glow: transparent;
   --accent-caution: #d97706;
   --accent-success: #059669;
   --accent-success-glow: transparent;
-  --accent-info: #9333ea; /* Purple instead of blue */
+  --accent-info: #8234e8; /* Purple instead of blue */
 
-  --btn-bg: rgba(17, 20, 26, 0.05);
-  --btn-hover: rgba(17, 20, 26, 0.08);
+  --btn-bg: #e5e7eb;
+  --btn-hover: #d1d5db;
   --tab-active: var(--accent-primary);
-  --tab-hover: rgba(17, 20, 26, 0.04);
+  --tab-hover: #e5e7eb;
 
-  --glass-bg: rgba(255, 255, 255, 0.88);
-  --glass-bg-strong: rgba(255, 255, 255, 0.96);
-  --glass-border: rgba(17, 20, 26, 0.08);
-  --glass-blur: 20px;
+  --glass-bg: #ffffff;
+  --glass-bg-strong: #ffffff;
+  --glass-border: #e5e7eb;
+  --glass-blur: 0px;
 
-  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.04);
-  --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.06);
-  --shadow-lg: 0 8px 28px rgba(0, 0, 0, 0.08);
-  --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.1);
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.1);
+  --shadow-xl: 0 16px 40px rgba(0, 0, 0, 0.12);
   --shadow-glow-primary: none;
-  --shadow-inset: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  --shadow-inset: none;
 
-  --gradient-panel: linear-gradient(180deg, rgba(255, 255, 255, 0.8) 0%, transparent 100%);
-  --gradient-card: linear-gradient(135deg, rgba(255, 255, 255, 0.5) 0%, transparent 50%);
-  --gradient-ambient: radial-gradient(ellipse at 50% 0%, rgba(225, 29, 72, 0.04) 0%, transparent 70%);
-  --gradient-track-bg: radial-gradient(ellipse at 50% 45%, rgba(210, 215, 225, 0.4) 0%, var(--bg-void) 70%);
+  --gradient-panel: none;
+  --gradient-card: none;
+  --gradient-ambient: none;
+  --gradient-track-bg: none;
 
   --panel-blur: none;
-  --panel-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  --panel-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
