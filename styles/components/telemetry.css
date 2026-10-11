@@ -132,17 +132,17 @@ body.light-mode .data-block .value {
 @media (max-width: 768px) {
   .telemetry-panel {
     flex-direction: column;
-    gap: 10px;
+    gap: 6px;
     width: 100%;
     align-items: stretch;
-    padding: 10px 14px;
+    padding: 8px 12px;
     border-radius: var(--radius-md);
   }
 
   .telemetry-data {
     width: 100%;
     justify-content: space-between;
-    gap: 12px;
+    gap: 10px;
   }
 
   .telemetry-action {
@@ -151,12 +151,12 @@ body.light-mode .data-block .value {
   }
 
   .data-block .label {
-    font-size: 10px;
+    font-size: 9.5px;
     letter-spacing: 1.2px;
   }
 
   .data-block .value {
-    font-size: 20px;
+    font-size: 18px;
     white-space: nowrap;
   }
 
@@ -166,13 +166,47 @@ body.light-mode .data-block .value {
   }
 
   .primary-btn {
-    padding: 12px 20px;
-    font-size: 15px;
+    padding: 10px 16px;
+    font-size: 14px;
     font-weight: 800;
     letter-spacing: 1.5px;
     width: 100%;
     display: block;
-    height: 48px;
+    height: 42px;
     border-radius: var(--radius-md);
+  }
+}
+
+@media (max-height: 640px) and (max-width: 768px) {
+  .telemetry-panel {
+    padding: 5px 10px;
+    gap: 4px;
+  }
+
+  .primary-btn {
+    height: 36px;
+    font-size: 13px;
+    padding: 7px 12px;
+  }
+
+  .data-block .value {
+    font-size: 16px;
+  }
+}
+
+@media (max-height: 500px) {
+  .telemetry-panel {
+    padding: 4px 8px;
+    gap: 4px;
+  }
+
+  .primary-btn {
+    height: 34px;
+    font-size: 12px;
+    padding: 6px 10px;
+  }
+
+  .data-block .value {
+    font-size: 15px;
   }
 }

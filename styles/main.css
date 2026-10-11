@@ -35,10 +35,19 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+  width: 100vw;
+  width: 100dvw;
   height: 100vh;
   height: 100dvh;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+@media (max-width: 768px) {
+  body {
+    align-items: stretch;
+    justify-content: flex-start;
+  }
 }
 
 /* ═══════════════════════════════════════════════
