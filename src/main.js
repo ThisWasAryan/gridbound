@@ -1,5 +1,3 @@
-import "../styles/variables.css";
-import "../styles/main.css";
 import { loadGame, saveGame } from "./state/saveLoad.js";
 import { initDebugPanel } from "./debug/debugPanel.js";
 import { initRender } from "./ui/render.js";
